@@ -10,23 +10,20 @@
 
 extern "C" simple_window_api
 struct Window {
-
-private:
-	Point location;
+	Point *location;
 	std::string title;
 	bool visible;
-public:
+
 	// Constructors
-	Window(Point location, std::string title) {
+	Window(Point* location, std::string title, bool visible) {
 		Window::location = location;
 		Window::title = title;
+		Window::visible = visible;
 	}
 	Window() {
-		Window::location = Point(0, 0);
+		Window::location = new Point(0, 0);
 		Window::title = "new Window";
+		Window::visible = false;
 	}
-
-	// Functions
-	void setTitle(std::string winTitle);
-	void set_visible(bool visible);
 };
+
