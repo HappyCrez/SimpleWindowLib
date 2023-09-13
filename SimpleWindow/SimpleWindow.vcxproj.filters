@@ -21,10 +21,10 @@
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Window.h">
+    <ClInclude Include="SWM.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Depend.h">
+    <ClInclude Include="MathSWM.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -35,7 +35,7 @@
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Window.cpp">
+    <ClCompile Include="SWM.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
