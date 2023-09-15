@@ -3,8 +3,7 @@
 
 namespace sw {
 
-    extern "C++"
-    struct Event {
+    struct simple_window_api Event {
 
         struct SizeEvent {
             unsigned int width;
@@ -12,7 +11,7 @@ namespace sw {
         };
 
         struct KeyEvent {
-            WPARAM keyCode;    
+            WPARAM code;    
             bool alt;       // is Alt pressed
             bool control;   // is Controll pressed
             bool shift;     // is Shift pressed
@@ -68,13 +67,13 @@ namespace sw {
     // Event queue
     static std::queue<Event> event_queue;
 
-    extern "C++" simple_window_api
+    extern "C" simple_window_api
     bool pollEvent(Event & event);
 
-    extern "C++" simple_window_api
+    extern "C" simple_window_api
     Event popEvent();
 
-    extern "C++" simple_window_api
+    extern "C" simple_window_api
     void pushEvent(Event & event);
     
 }

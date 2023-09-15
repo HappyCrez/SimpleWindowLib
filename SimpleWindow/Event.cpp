@@ -17,6 +17,7 @@ namespace sw {
 	}
 
 	Event popEvent() {
+		if (event_queue.empty()) return Event();
 		Event event = event_queue.front();
 		event_queue.pop();
 		return event;

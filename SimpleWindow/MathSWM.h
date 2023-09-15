@@ -1,8 +1,9 @@
 #pragma once
+#include "pch.h"
 
 namespace sw {
 
-	struct Vector2i {
+	struct simple_window_api Vector2i {
 		int x;
 		int y;
 	
@@ -17,7 +18,7 @@ namespace sw {
 		}
 	};
 
-	struct Vector2u {
+	struct simple_window_api Vector2u {
 		unsigned int x, y;
 
 		Vector2u(unsigned int x, unsigned int y) {

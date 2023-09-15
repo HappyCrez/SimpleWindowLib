@@ -9,39 +9,60 @@ namespace sw {
 
 	WNDCLASS createWNDCLASS();
 
-	extern "C++" simple_window_api
-	HWND initializeWindow();
+	HWND createWin(Vector2u& location, Vector2u& size, std::string title);
 
-	extern "C++" simple_window_api
-	HWND initializeWindow(Vector2u& location, Vector2u& size, std::string title);
-
-	extern "C++"
-	struct Window {
+	class simple_window_api Window {
+	private:
 		HWND m_handle;
-		Vector2u location = Vector2u(0, 0);
-		Vector2u size = Vector2u(300, 300);
+		Vector2u location;
+		Vector2u size;
+		std::string title;
 
-		Window() {
-			m_handle = initializeWindow();
+	public:
+		Window () : Window("New Window") {
+			
 		}
+
+		Window(std::string title) :
+			Window(Vector2u(0, 0),		// Location
+			Vector2u(300, 300),			// Size
+			title) {
+
+		}
+
+		Window (Vector2u location, Vector2u size, std::string title) {
+			Window::location = location;
+			Window::size = size;
+			Window::title = title;
+			m_handle = nullptr;
+
+			std::thread processWindow(
+				std::bind (& Window::initWindow, this,
+				location, size, title)
+				);
+			processWindow.detach();
+
+			while (!Window::m_handle) {
+				// Wait window creation
+				Sleep(1000);
+			}
+		}
+
+		bool isOpen();
+
+		void setSize(Vector2u& size);
+
+		void setLocation(Vector2u& location);
+
+		void setParams(Vector2u& location, Vector2u& size);
+
+		Vector2u getSize();
+
+	private:
+		void initWindow(Vector2u& location, Vector2u& size, std::string title);
+		void processMessages();
+		void clear();
 	};
 
-	extern "C++" simple_window_api
-	bool isWindowOpen(Window& window);
-		
-	extern "C++" simple_window_api
-	void translateMessagesSomeTime(Window& window);
-
-	extern "C++" simple_window_api
-	void setWindowSize(Window& window, Vector2u& size);
-
-	extern "C++" simple_window_api
-	void setWindowLocation(Window& window, Vector2u& location);
-		
-	extern "C++" simple_window_api
-	void setWindowProperties(Window& window, Vector2u& location, Vector2u& size);
-
-	extern "C++" simple_window_api
 	Vector2u getWindowSize(HWND hwnd);
-
 }
