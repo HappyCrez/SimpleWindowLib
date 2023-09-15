@@ -33,6 +33,9 @@
     <ClInclude Include="SWL.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Window32API.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -45,6 +48,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Event.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Window32API.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
