@@ -160,9 +160,8 @@ namespace sw {
 	}
 
 	Vector2u Window::getSize () {
-		RECT rect;
-		GetClientRect(Window::m_handle, &rect);
-		return Vector2u(static_cast<unsigned int>(rect.right - rect.left), static_cast<unsigned int>(rect.bottom - rect.top));
+		if (m_handle)
+			getWindowSize(Window::m_handle);
 	}
 
 	Vector2u getWindowSize(HWND hwnd) {
