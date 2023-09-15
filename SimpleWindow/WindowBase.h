@@ -3,6 +3,7 @@
 
 namespace sw {
 
+	
 	class simple_window_api Window {
 
 	public:
@@ -20,12 +21,12 @@ namespace sw {
 		void setParams(Vector2u& location, Vector2u& size);
 
 		Vector2u getSize();
-		HWND getHandle();
+		HWND getHandle();	// Client can extend library oportunites and use win32API
 
 	private:
-		HWND m_handle;
 		Vector2u location;
 		Vector2u size;
+		HWND m_handle;
 		std::string title;
 
 		void initWindow(Vector2u& location, Vector2u& size, std::string title);

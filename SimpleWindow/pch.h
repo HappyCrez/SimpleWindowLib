@@ -20,7 +20,6 @@
 #include <thread>
 #include <chrono>
 #include <future>
-#include <atomic>
 
 
 #endif //PCH_H

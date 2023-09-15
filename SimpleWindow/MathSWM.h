@@ -25,4 +25,15 @@ namespace sw {
 			Vector2u::y = y;
 		}
 	};
+
+	struct simple_window_api Vector2f {
+		float x, y;
+
+		Vector2f() : Vector2f(0, 0) { }
+
+		Vector2f(float x, float y) {
+			Vector2f::x = x;
+			Vector2f::y = y;
+		}
+	};
 }

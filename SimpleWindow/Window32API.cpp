@@ -9,22 +9,22 @@ namespace sw {
 	const wchar_t* className = L"SWM_Window";
 
 	HWND Window32API::createWin(Vector2u& location, Vector2u& size, std::string title) {
-		// convert string to wstring
+		// convert string to wstring and use as wchar_t *
 		std::wstring wTitle(std::begin(title), std::end(title));
 
 		return CreateWindowEx(
 			0,
 			className,
-			&wTitle[0],					// wchar_t*
+			&wTitle[0],	
 			WS_OVERLAPPEDWINDOW,
 			location.x,
 			location.y,
 			size.x,
 			size.y,
-			NULL,						// Parent Window
-			NULL,						// Menu
-			GetModuleHandle(nullptr),	// Instance handle
-			NULL						// Additional application data
+			NULL,						
+			NULL,						
+			GetModuleHandle(nullptr),	
+			NULL						
 		);
 	}
 

@@ -22,7 +22,7 @@ namespace sw {
 
 			// Force main thread to wait window creation
 			while (!Window::m_handle) {
-				Sleep(1000);
+				Sleep(1000); // 1 second
 			}
 	}
 
@@ -34,7 +34,7 @@ namespace sw {
 
 		Window::m_handle = Window32API::createWin(location, size, title);
 
-		ShowWindow(m_handle, SW_SHOW);
+		ShowWindow(Window::m_handle, SW_SHOW);
 		processMessages();
 	}
 
@@ -45,7 +45,6 @@ namespace sw {
 			TranslateMessage(&message);
 			DispatchMessage(&message);
 		}
-
 		Window::close();
 	}
 
@@ -71,13 +70,13 @@ namespace sw {
 	}
 
 	void Window::setSize(Vector2u& size) {
+		if (!Window::m_handle) return;
 		SetWindowPos(Window::m_handle, NULL, Window::location.x, Window::location.y, size.x, size.y, 0);
 	}
 
 	Vector2u Window::getSize () {
 		if (!Window::m_handle) return Vector2u();
 		return Window32API::getWindowSize(Window::m_handle);
-		
 	}
 
 	HWND Window::getHandle() {
