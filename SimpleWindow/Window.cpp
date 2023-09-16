@@ -1,7 +1,7 @@
 #pragma once
 #include "pch.h"
 #include "Event.h"
-#include "Window32API.h"
+#include "Window.h"
 
 namespace sw {
 	static int window_count = 0;	// Windows owned by SWL
@@ -9,7 +9,8 @@ namespace sw {
 	Vector2u lastSize;					// Window lastSize
 	const wchar_t* className = L"SWM_Window";
 
-	Window32API::Window32API(Vector2u& location, Vector2u& size, std::string* title) {
+	Window::Window(Vector2u& location, Vector2u& size, std::string* title)
+	{
 		if (window_count == 0)
 			createAndRegisterWindowClass();
 		++window_count;
@@ -20,12 +21,14 @@ namespace sw {
 		processEvents();
 	}
 
-	void Window32API::createAndRegisterWindowClass() {
-		WNDCLASS winClass = Window32API::createWindowClass();
+	void Window::createAndRegisterWindowClass()
+	{
+		WNDCLASS winClass = Window::createWindowClass();
 		RegisterClassW(&winClass);
 	}
 
-	WNDCLASS Window32API::createWindowClass() {
+	WNDCLASS Window::createWindowClass()
+	{
 		WNDCLASS winClass = { };
 		winClass.hIcon			= LoadIcon(NULL, IDI_APPLICATION);
 		winClass.hCursor		= LoadCursor(NULL, IDC_ARROW);
@@ -37,7 +40,8 @@ namespace sw {
 		return winClass;
 	}
 
-	HWND Window32API::createWin(Vector2u& location, Vector2u& size, std::string* title) {
+	HWND Window::createWin(Vector2u& location, Vector2u& size, std::string* title)
+	{
 		// convert string to wstring and use as wchar_t *
 		std::wstring wTitle(std::begin(*title), std::end(*title));
 
@@ -57,7 +61,7 @@ namespace sw {
 		);
 	}
 
-	LRESULT CALLBACK Window32API::winProcedure(HWND handle, UINT message, WPARAM wparam, LPARAM lparam)
+	LRESULT CALLBACK Window::winProcedure(HWND handle, UINT message, WPARAM wparam, LPARAM lparam)
 	{
 		if (message == WM_NCCREATE)
 		{
@@ -66,7 +70,7 @@ namespace sw {
 			SetWindowLongPtrW(handle, GWLP_USERDATA, window);
 		}
 
-		Window32API* window = handle ? reinterpret_cast<Window32API*>(GetWindowLongPtr(handle, GWLP_USERDATA)) : nullptr;
+		Window* window = handle ? reinterpret_cast<Window*>(GetWindowLongPtr(handle, GWLP_USERDATA)) : nullptr;
 
 		if (window)
 		{
@@ -89,14 +93,16 @@ namespace sw {
 		// Save focus on window on alt or F10 click
 		if ((message == WM_SYSCOMMAND) && (wparam == SC_KEYMENU))
 			return 0;
-
+		
+		if (!handle) return 0;
 		return DefWindowProc(handle, message, wparam, lparam);
 	}
 
-	void Window32API::processEvent(UINT message, WPARAM wparam, LPARAM lparam)
+	void Window::processEvent(UINT message, WPARAM wparam, LPARAM lparam)
 	{
 		Event event;
-		switch (message) {
+		switch (message)
+		{
 
 		// Window on close
 		case WM_CLOSE:
@@ -147,7 +153,8 @@ namespace sw {
 		}
 	}
 
-	bool Window32API::pollEvent(Event& event) {
+	bool Window::pollEvent(Event& event)
+	{
 
 		if (event_queue.empty())
 		{
@@ -163,7 +170,8 @@ namespace sw {
 		}
 	}
 
-	void Window32API::processEvents() {
+	void Window::processEvents()
+	{
 
 		MSG message = { };
 
@@ -173,17 +181,54 @@ namespace sw {
 		}
 	}
 
-	void Window32API::pushEvent(Event& event) {
+	void Window::pushEvent(Event& event)
+	{
 		event_queue.push(event);
 	}
 
-	Vector2u Window32API::getWindowSize(HWND hwnd) {
+	Vector2u Window::getWindowSize(HWND hwnd)
+	{
 		RECT rect;
 		GetClientRect(hwnd, &rect);
 		return Vector2u(static_cast<unsigned int>(rect.right - rect.left), static_cast<unsigned int>(rect.bottom - rect.top));
 	}
 
-	bool Window32API::isOpen() {
+	bool Window::isOpen()
+	{
 		return window_handle != nullptr;
+	}
+
+	void Window::close() {
+		window_handle = nullptr;
+	}
+
+	void Window::setParams(Vector2u& location, Vector2u& size) {
+		if (!window_handle) return;
+		setLocation(location);
+		setSize(size);
+	}
+
+	void Window::setLocation(Vector2u& location) {
+		if (!window_handle) return;
+		SetWindowPos(window_handle, NULL, location.x, location.y, size.x, size.y, 0);
+	}
+		
+	void Window::setSize(Vector2u& size) {
+		if (!window_handle) return;
+		SetWindowPos(window_handle, NULL, location.x, location.y, size.x, size.y, 0);
+	}
+
+
+	Vector2u Window::getSize()
+	{
+		if (!window_handle) return Vector2u();
+		RECT rect;
+		GetClientRect(window_handle, &rect);
+		return Vector2u(static_cast<unsigned int>(rect.right - rect.left), static_cast<unsigned int>(rect.bottom - rect.top));;
+	}
+
+	HWND Window::getHandle()
+	{
+		return window_handle;
 	}
 }

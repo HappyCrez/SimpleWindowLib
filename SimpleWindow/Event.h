@@ -5,12 +5,14 @@ namespace sw {
 
     struct simple_window_api Event {
 
-        struct SizeEvent {
+        struct SizeEvent
+        {
             unsigned int width;
             unsigned int height;
         };
 
-        struct KeyEvent {
+        struct KeyEvent
+        {
             WPARAM code;    
             bool alt;       // is Alt pressed
             bool control;   // is Controll pressed
@@ -22,13 +24,15 @@ namespace sw {
             std::uint32_t unicodeChar;
         };
 
-        struct mouseButtonEvent {
+        struct mouseButtonEvent
+        {
             WPARAM code;
             int x;
             int y;
         };
 
-        struct mouseMovedEvent {
+        struct mouseMovedEvent
+        {
             int x;
             int y;
         };
@@ -55,7 +59,8 @@ namespace sw {
         // Fields
         EventType type;
 
-        union {
+        union
+        {
             SizeEvent size;
             KeyEvent key;
             TextEvent text;

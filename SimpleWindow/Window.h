@@ -3,19 +3,24 @@
 
 namespace sw {
 
-	class simple_window_api Window32API {
+	class simple_window_api Window {
 	public:
-		Window32API() : Window32API(size, title) { }
-		Window32API(Vector2u& size, std::string* title) : Window32API (location, size, title) { }
-		Window32API(Vector2u& location, Vector2u& size, std::string* title);
-
-		// WNDCLASS
-		void createAndRegisterWindowClass();
-		WNDCLASS createWindowClass();
+		Window() : Window(size, title) { }
+		Window(Vector2u& size, std::string* title) : Window (location, size, title) { }
+		Window(Vector2u& location, Vector2u& size, std::string* title);
 		
 		Vector2u getWindowSize(HWND hwnd);
 
 		bool isOpen();
+		void close();
+		bool pollEvent(Event& event);
+
+		void setSize(Vector2u& size);
+		void setLocation(Vector2u& location);
+		void setParams(Vector2u& location, Vector2u& size);
+
+		Vector2u getSize();
+		HWND getHandle();
 
 	private:
 		Vector2u location = Vector2u(0, 0);
@@ -23,12 +28,15 @@ namespace sw {
 		HWND window_handle = nullptr;
 		std::string* title = new std::string("Hello world");
 
+		// WNDCLASS
+		void createAndRegisterWindowClass();
+		WNDCLASS createWindowClass();
+
 		// Window
 		HWND createWin(Vector2u& location, Vector2u& size, std::string* title);
 		static LRESULT CALLBACK winProcedure(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
 
 		void processEvent(UINT message, WPARAM wparam, LPARAM lparam);
-		bool pollEvent(Event& event);
 		void processEvents();
 
 		// Event queue
