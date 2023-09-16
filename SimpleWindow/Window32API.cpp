@@ -9,7 +9,7 @@ namespace sw {
 	Vector2u lastSize;					// Window lastSize
 	const wchar_t* className = L"SWM_Window";
 
-	Window32API::Window32API() {
+	Window32API::Window32API(Vector2u& location, Vector2u& size, std::string* title) {
 		if (window_count == 0)
 			createAndRegisterWindowClass();
 		++window_count;
@@ -37,9 +37,9 @@ namespace sw {
 		return winClass;
 	}
 
-	HWND Window32API::createWin(Vector2u& location, Vector2u& size, std::string title) {
+	HWND Window32API::createWin(Vector2u& location, Vector2u& size, std::string* title) {
 		// convert string to wstring and use as wchar_t *
-		std::wstring wTitle(std::begin(title), std::end(title));
+		std::wstring wTitle(std::begin(*title), std::end(*title));
 
 		return CreateWindowEx(
 			0,
