@@ -13,7 +13,7 @@ namespace sw {
 
         struct KeyEvent
         {
-            WPARAM code;    
+            unsigned int code;    
             bool alt;       // is Alt pressed
             bool control;   // is Controll pressed
             bool shift;     // is Shift pressed
@@ -24,14 +24,14 @@ namespace sw {
             std::uint32_t unicodeChar;
         };
 
-        struct mouseButtonEvent
+        struct MouseButtonEvent
         {
             WPARAM code;
             int x;
             int y;
         };
 
-        struct mouseMovedEvent
+        struct MouseMovedEvent
         {
             int x;
             int y;
@@ -64,8 +64,8 @@ namespace sw {
             SizeEvent size;
             KeyEvent key;
             TextEvent text;
-            mouseButtonEvent mouseBtn;
-            mouseMovedEvent mouseMoved;
+            MouseButtonEvent mouseBtn;
+            MouseMovedEvent mouseMoved;
         };
     };
 }

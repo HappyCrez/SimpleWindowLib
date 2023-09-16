@@ -9,8 +9,6 @@ namespace sw {
 		Window(Vector2u size, std::string title) : Window (Vector2u(0, 0), size, title) { }
 		Window(Vector2u location, Vector2u size, std::string title);
 		
-		Vector2u getWindowSize(HWND hwnd);
-
 		bool isOpen();
 		void close();
 		bool pollEvent(Event& event);
@@ -25,7 +23,7 @@ namespace sw {
 	private:
 		Vector2u location;
 		Vector2u size;
-		HWND window_handle = nullptr;
+		HWND w_handle = nullptr;
 		std::string title;
 
 		// WNDCLASS
@@ -40,8 +38,7 @@ namespace sw {
 		void processEvents();
 
 		// Event queue
-		std::queue<Event> event_queue;
+		std::queue<Event> events;
 		void pushEvent(Event& event);
 	};
-
 }

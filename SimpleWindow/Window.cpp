@@ -15,8 +15,8 @@ namespace sw {
 			createAndRegisterWindowClass();
 		++window_count;
 
-		window_handle = createWin(location, size, title);
-		ShowWindow(window_handle, SW_SHOW);
+		w_handle = createWin(location, size, title);
+		ShowWindow(w_handle, SW_SHOW);
 
 		processEvents();
 	}
@@ -99,7 +99,10 @@ namespace sw {
 
 	void Window::processEvent(UINT message, WPARAM wparam, LPARAM lparam)
 	{
+		if (!w_handle) return;
+		std::uint32_t character;
 		Event event;
+
 		switch (message)
 		{
 
@@ -111,7 +114,7 @@ namespace sw {
 			// Window Resize
 		case WM_SIZE:
 			event.type = Event::Resized;
-			lastSize = getWindowSize(window_handle);
+			lastSize = getSize();
 			event.size.width = lastSize.x;
 			event.size.height = lastSize.y;
 			pushEvent(event);
@@ -131,22 +134,31 @@ namespace sw {
 
 			// Text entere
 		case WM_CHAR:
+			character = static_cast<std::uint32_t>(wparam);
 			event.type = Event::TextEntered;
-			event.key.code = wparam; // change to keyCode
+			event.text.unicodeChar = character; // change to keyCode
 			pushEvent(event);
 			break;
 
 		case WM_KEYDOWN:
 		case WM_SYSKEYDOWN:
 			event.type = Event::KeyPressed;
-			event.key.code = wparam;
+			event.key.code		= static_cast<unsigned int>(wparam);
+			event.key.alt		= HIWORD(GetKeyState(VK_MENU)) != 0;
+			event.key.control	= HIWORD(GetKeyState(VK_CONTROL)) != 0;
+			event.key.shift		= HIWORD(GetKeyState(VK_SHIFT)) != 0;
+			event.key.system	= HIWORD(GetKeyState(VK_LWIN)) || HIWORD(GetKeyState(VK_RWIN));
 			pushEvent(event);
 			break;
 
 		case WM_KEYUP:
 		case WM_SYSKEYUP:
 			event.type = Event::KeyReleased;
-			event.key.code = wparam;
+			event.key.code		= static_cast<unsigned int>(wparam);
+			event.key.alt		= HIWORD(GetKeyState(VK_MENU)) != 0;
+			event.key.control	= HIWORD(GetKeyState(VK_CONTROL)) != 0;
+			event.key.shift		= HIWORD(GetKeyState(VK_SHIFT)) != 0;
+			event.key.system	= HIWORD(GetKeyState(VK_LWIN)) || HIWORD(GetKeyState(VK_RWIN));
 			pushEvent(event);
 			break;
 		}
@@ -154,16 +166,15 @@ namespace sw {
 
 	bool Window::pollEvent(Event& event)
 	{
-
-		if (event_queue.empty())
+		if (events.empty())
 		{
 			processEvents();
 
 			return false;
 		}
 		else {
-			event = event_queue.front();
-			event_queue.pop();
+			event = events.front();
+			events.pop();
 
 			return true;
 		}
@@ -171,7 +182,6 @@ namespace sw {
 
 	void Window::processEvents()
 	{
-
 		MSG message = { };
 
 		while (PeekMessageW(&message, NULL, 0, 0, PM_REMOVE)) {
@@ -182,52 +192,47 @@ namespace sw {
 
 	void Window::pushEvent(Event& event)
 	{
-		event_queue.push(event);
-	}
-
-	Vector2u Window::getWindowSize(HWND hwnd)
-	{
-		RECT rect;
-		GetClientRect(hwnd, &rect);
-		return Vector2u(static_cast<unsigned int>(rect.right - rect.left), static_cast<unsigned int>(rect.bottom - rect.top));
+		events.push(event);
 	}
 
 	bool Window::isOpen()
 	{
-		return window_handle != nullptr;
+		return w_handle != nullptr;
 	}
 
-	void Window::close() {
-		window_handle = nullptr;
+	void Window::close()
+	{
+		w_handle = nullptr;
 	}
 
 	void Window::setParams(Vector2u& location, Vector2u& size) {
-		if (!window_handle) return;
+		if (!w_handle) return;
 		setLocation(location);
 		setSize(size);
 	}
 
-	void Window::setLocation(Vector2u& location) {
-		if (!window_handle) return;
-		SetWindowPos(window_handle, NULL, location.x, location.y, size.x, size.y, 0);
+	void Window::setLocation(Vector2u& location)
+	{
+		if (!w_handle) return;
+		SetWindowPos(w_handle, NULL, location.x, location.y, size.x, size.y, 0);
 	}
 		
-	void Window::setSize(Vector2u& size) {
-		if (!window_handle) return;
-		SetWindowPos(window_handle, NULL, location.x, location.y, size.x, size.y, 0);
+	void Window::setSize(Vector2u& size)
+	{
+		if (!w_handle) return;
+		SetWindowPos(w_handle, NULL, location.x, location.y, size.x, size.y, 0);
 	}
-
 
 	Vector2u Window::getSize()
 	{
-		if (!window_handle) return Vector2u();
+		if (!w_handle) return Vector2u();
 		RECT rect;
-		GetClientRect(window_handle, &rect);
+		GetClientRect(w_handle, &rect);
 		return Vector2u(static_cast<unsigned int>(rect.right - rect.left), static_cast<unsigned int>(rect.bottom - rect.top));;
 	}
 
 	HWND Window::getHandle()
 	{
-		return window_handle;
+		return w_handle;
 	}
 }

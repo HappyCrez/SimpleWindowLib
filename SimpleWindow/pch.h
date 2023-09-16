@@ -8,9 +8,7 @@
 #define simple_window_api __declspec(dllimport)
 #endif
 
-
 // Precompiled headers
-
 #include "framework.h"
 #include "MathSWM.h"
 #include <string>
@@ -20,6 +18,5 @@
 #include <thread>
 #include <chrono>
 #include <future>
-
 
 #endif //PCH_H
