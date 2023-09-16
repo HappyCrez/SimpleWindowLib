@@ -9,7 +9,7 @@ namespace sw {
 	Vector2u lastSize;					// Window lastSize
 	const wchar_t* className = L"SWM_Window";
 
-	Window::Window(Vector2u& location, Vector2u& size, std::string* title)
+	Window::Window(Vector2u location, Vector2u size, std::string title)
 	{
 		if (window_count == 0)
 			createAndRegisterWindowClass();
@@ -40,10 +40,10 @@ namespace sw {
 		return winClass;
 	}
 
-	HWND Window::createWin(Vector2u& location, Vector2u& size, std::string* title)
+	HWND Window::createWin(Vector2u location, Vector2u size, std::string title)
 	{
 		// convert string to wstring and use as wchar_t *
-		std::wstring wTitle(std::begin(*title), std::end(*title));
+		std::wstring wTitle(std::begin(title), std::end(title));
 
 		return CreateWindowEx(
 			0,
@@ -66,7 +66,6 @@ namespace sw {
 		if (message == WM_NCCREATE)
 		{
 			auto window = reinterpret_cast<LONG_PTR>(reinterpret_cast<CREATESTRUCT*> (lparam)->lpCreateParams);
-			std::cout << window;
 			SetWindowLongPtrW(handle, GWLP_USERDATA, window);
 		}
 

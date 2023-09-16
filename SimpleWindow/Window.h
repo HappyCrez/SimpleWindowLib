@@ -5,9 +5,9 @@ namespace sw {
 
 	class simple_window_api Window {
 	public:
-		Window() : Window(size, title) { }
-		Window(Vector2u& size, std::string* title) : Window (location, size, title) { }
-		Window(Vector2u& location, Vector2u& size, std::string* title);
+		Window() : Window(Vector2u(400, 300), "Hello world") { }
+		Window(Vector2u size, std::string title) : Window (Vector2u(0, 0), size, title) { }
+		Window(Vector2u location, Vector2u size, std::string title);
 		
 		Vector2u getWindowSize(HWND hwnd);
 
@@ -23,17 +23,17 @@ namespace sw {
 		HWND getHandle();
 
 	private:
-		Vector2u location = Vector2u(0, 0);
-		Vector2u size = Vector2u(400, 300);
+		Vector2u location;
+		Vector2u size;
 		HWND window_handle = nullptr;
-		std::string* title = new std::string("Hello world");
+		std::string title;
 
 		// WNDCLASS
 		void createAndRegisterWindowClass();
 		WNDCLASS createWindowClass();
 
 		// Window
-		HWND createWin(Vector2u& location, Vector2u& size, std::string* title);
+		HWND createWin(Vector2u location, Vector2u size, std::string title);
 		static LRESULT CALLBACK winProcedure(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
 
 		void processEvent(UINT message, WPARAM wparam, LPARAM lparam);
