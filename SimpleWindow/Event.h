@@ -63,17 +63,4 @@ namespace sw {
             mouseMovedEvent mouseMoved;
         };
     };
-    
-    // Event queue
-    static std::queue<Event> event_queue;
-
-    extern "C" simple_window_api
-    bool pollEvent(Event & event);
-
-    extern "C" simple_window_api
-    Event popEvent();
-
-    extern "C" simple_window_api
-    void pushEvent(Event & event);
-    
 }

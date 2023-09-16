@@ -47,9 +47,6 @@
     <ClCompile Include="WindowBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Event.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Window32API.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
