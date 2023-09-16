@@ -1,8 +1,6 @@
 # SimpleWindowLib
 Пример использования библиотеки
 
-#include <SWL.h>
-int main() {
 	sw::Vector2u winSize(400, 400);
 	sw::Vector2u winLocate(600, 300);
 	std::string winTitle = "My title";
@@ -23,4 +21,3 @@ int main() {
 			}
 		}
 	}
-}
