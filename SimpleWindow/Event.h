@@ -64,8 +64,8 @@ namespace sw {
             SizeEvent size;
             KeyEvent key;
             TextEvent text;
-            MouseButtonEvent mouseBtn;
-            MouseMovedEvent mouseMoved;
+            MouseButtonEvent mouseClick;
+            MouseMovedEvent mouse;
         };
     };
 }

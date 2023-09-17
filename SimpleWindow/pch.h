@@ -18,5 +18,5 @@
 #include <thread>
 #include <chrono>
 #include <future>
-
+#include <Windowsx.h>
 #endif //PCH_H

@@ -5,18 +5,17 @@
 
 namespace sw {
 	static int window_count = 0;	// Windows owned by SWL
+	Vector2u last_size;					// Window lastSize
+	const wchar_t* class_name = L"SWM_Window";
 
-	Vector2u lastSize;					// Window lastSize
-	const wchar_t* className = L"SWM_Window";
-
-	Window::Window(Vector2u location, Vector2u size, std::string title)
+	Window::Window(Vector2u position, Vector2u size, std::string title)
 	{
 		if (window_count == 0)
 			createAndRegisterWindowClass();
 		++window_count;
 
-		w_handle = createWin(location, size, title);
-		ShowWindow(w_handle, SW_SHOW);
+		handle = createWin(position, size, title);
+		ShowWindow(handle, SW_SHOW);
 
 		processEvents();
 	}
@@ -34,24 +33,24 @@ namespace sw {
 		winClass.hCursor		= LoadCursor(NULL, IDC_ARROW);
 		winClass.hInstance		= GetModuleHandle(nullptr);
 		winClass.hbrBackground	= (HBRUSH)COLOR_WINDOW;
-		winClass.lpszClassName	= className;
+		winClass.lpszClassName	= class_name;
 		winClass.lpfnWndProc	= winProcedure;
 
 		return winClass;
 	}
 
-	HWND Window::createWin(Vector2u location, Vector2u size, std::string title)
+	HWND Window::createWin(Vector2u position, Vector2u size, std::string title)
 	{
 		// convert string to wstring and use as wchar_t *
 		std::wstring wTitle(std::begin(title), std::end(title));
 
 		return CreateWindowEx(
 			0,
-			className,
+			class_name,
 			&wTitle[0],	
 			WS_OVERLAPPEDWINDOW,
-			location.x,
-			location.y,
+			position.x,
+			position.y,
 			size.x,
 			size.y,
 			NULL,						
@@ -99,7 +98,7 @@ namespace sw {
 
 	void Window::processEvent(UINT message, WPARAM wparam, LPARAM lparam)
 	{
-		if (!w_handle) return;
+		if (!handle) return;
 		std::uint32_t character;
 		Event event;
 
@@ -114,9 +113,9 @@ namespace sw {
 			// Window Resize
 		case WM_SIZE:
 			event.type = Event::Resized;
-			lastSize = getSize();
-			event.size.width = lastSize.x;
-			event.size.height = lastSize.y;
+			last_size = getSize();
+			event.size.width = last_size.x;
+			event.size.height = last_size.y;
 			pushEvent(event);
 			break;
 
@@ -161,6 +160,31 @@ namespace sw {
 			event.key.system	= HIWORD(GetKeyState(VK_LWIN)) || HIWORD(GetKeyState(VK_RWIN));
 			pushEvent(event);
 			break;
+
+		case WM_MOUSEMOVE:
+			event.type = Event::MouseMoved;
+			event.mouse.x = GET_X_LPARAM(lparam);
+			event.mouse.y = GET_Y_LPARAM(lparam);
+			pushEvent(event);
+			break;
+
+		case WM_LBUTTONDOWN:
+		case WM_RBUTTONDOWN:
+			event.type = Event::MouseButtonPressed;
+			event.mouseClick.code = wparam;
+			event.mouseClick.x = GET_X_LPARAM(lparam);
+			event.mouseClick.y = GET_Y_LPARAM(lparam);
+			pushEvent(event);
+			break;
+
+		case WM_LBUTTONUP:
+		case WM_RBUTTONUP:
+			event.type = Event::MouseButtonReleased;
+			event.mouseClick.code = wparam;
+			event.mouseClick.x = GET_X_LPARAM(lparam);
+			event.mouseClick.y = GET_Y_LPARAM(lparam);
+			pushEvent(event);
+			break;
 		}
 	}
 
@@ -195,44 +219,92 @@ namespace sw {
 		events.push(event);
 	}
 
+	void Window::add(Widget& widget)
+	{
+		Vector2u position = widget.getPosition();
+		Vector2u size = widget.getSize();
+
+		std::string widget_class_name = widget.getTypeName();
+		std::string widget_title = widget.getTitle();
+
+		long int flags = WS_VISIBLE | WS_CHILD;
+		switch (widget.getType())
+		{
+		case WidgetType::Button:
+
+			break;
+
+		case WidgetType::Label:
+			break;
+
+		case WidgetType::TextField:
+			flags |= ES_MULTILINE;
+			flags |= WS_VSCROLL;
+			break;
+		}
+
+		switch (widget.getFont().getAlign())
+		{
+		case TextAlign::Center:
+			flags |= ES_CENTER;
+			break;
+		case TextAlign::Left:
+			flags |= ES_LEFT;
+			break;
+		case TextAlign::Right:
+			flags |= ES_RIGHT;
+			break;
+		}
+
+		HWND widget_handle = CreateWindowA(
+			&widget_class_name[0], &widget_title[0], flags,
+			position.x, position.y,
+			size.x, size.y, 
+			Window::handle, (HMENU)clickEvent, NULL, NULL);
+		
+		
+		//SendMessage(widget_handle, WM_SETFONT, WPARAM(widget.getFont().getSystemFont()), TRUE);
+		widget.setHandle(widget_handle);
+	}
+
 	bool Window::isOpen()
 	{
-		return w_handle != nullptr;
+		return handle != nullptr;
 	}
 
 	void Window::close()
 	{
-		w_handle = nullptr;
+		handle = nullptr;
 	}
 
-	void Window::setParams(Vector2u& location, Vector2u& size) {
-		if (!w_handle) return;
-		setLocation(location);
+	void Window::setParams(Vector2u& position, Vector2u& size) {
+		if (!handle) return;
+		setPosition(position);
 		setSize(size);
 	}
 
-	void Window::setLocation(Vector2u& location)
+	void Window::setPosition(Vector2u& position)
 	{
-		if (!w_handle) return;
-		SetWindowPos(w_handle, NULL, location.x, location.y, size.x, size.y, 0);
+		if (!handle) return;
+		SetWindowPos(handle, NULL, position.x, position.y, size.x, size.y, 0);
 	}
 		
 	void Window::setSize(Vector2u& size)
 	{
-		if (!w_handle) return;
-		SetWindowPos(w_handle, NULL, location.x, location.y, size.x, size.y, 0);
+		if (!handle) return;
+		SetWindowPos(handle, NULL, position.x, position.y, size.x, size.y, 0);
 	}
 
 	Vector2u Window::getSize()
 	{
-		if (!w_handle) return Vector2u();
+		if (!handle) return Vector2u();
 		RECT rect;
-		GetClientRect(w_handle, &rect);
+		GetClientRect(handle, &rect);
 		return Vector2u(static_cast<unsigned int>(rect.right - rect.left), static_cast<unsigned int>(rect.bottom - rect.top));;
 	}
 
 	HWND Window::getHandle()
 	{
-		return w_handle;
+		return handle;
 	}
 }
