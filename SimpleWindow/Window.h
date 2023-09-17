@@ -7,7 +7,7 @@ namespace sw {
 
 	class simple_window_api Window {
 	public:
-		Window() : Window(Vector2u(400, 300), "Hello world") { }
+		Window() : Window(Vector2u(1200, 800), "Hello world") { }
 		Window(Vector2u size, std::string title) : Window (Vector2u(0, 0), size, title) { }
 		Window(Vector2u position, Vector2u size, std::string title);
 		

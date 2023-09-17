@@ -1,7 +1,7 @@
 #pragma once
 #include "pch.h"
 #include "Font.h"
-#define clickEvent 1
+#include "Event.h"
 
 namespace sw {
 	enum WidgetType
@@ -14,12 +14,16 @@ namespace sw {
 	class simple_window_api Widget {
 	public:
 		Widget() : Widget(WidgetType::Label, "") { }
-		Widget(WidgetType type, std::string title) : Widget(Font(), type, Vector2u(200, 50), Vector2u(0, 0), title) { }
-		Widget(Font textStyle, WidgetType type, Vector2u size, Vector2u position, std::string title);
+		Widget(WidgetType type, std::string text) : Widget(Font(), type, Vector2u(200, 50), Vector2u(0, 0), text) { }
+		Widget(Font textStyle, WidgetType type, Vector2u size, Vector2u position, std::string text);
+
+		bool isClicked(Event::MouseButtonEvent& mouseClick);
 
 		void setSize(Vector2u size);
 		void setPosition(Vector2u position);
 		void setHandle(HWND handle);
+		void setText(std::string text);
+		std::string getText();
 
 		Vector2u getSize();
 		Vector2u getPosition();
@@ -36,7 +40,7 @@ namespace sw {
 		WidgetType type;
 		std::string class_name;
 		
-		std::string title;
+		std::string text;
 		Vector2u size;
 		Vector2u position;
 		Font textStyle;

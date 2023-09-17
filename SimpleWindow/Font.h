@@ -14,8 +14,9 @@ namespace sw {
 	class simple_window_api Font
 	{
 	public:
-		Font() : Font(TextAlign::Center, 12, "Times New Roman") { }
-		Font(TextAlign align, int size, std::string fontFamily);
+		Font() : Font(12, FW_NORMAL, "Times New Roman") { }
+		Font(int size, int weight, std::string fontFamily) : Font(TextAlign::Left, size, weight, false, false, false, fontFamily) { }
+		Font(TextAlign align, int size, int weight, bool isCursive, bool isUnderline, bool isStrikeOut, std::string fontFamily);
 
 		HFONT getSystemFont();
 		TextAlign getAlign();
@@ -24,6 +25,10 @@ namespace sw {
 	private:
 		TextAlign align;
 		int size;
+		int weight;
+		bool isCursive;
+		bool isUnderline;
+		bool isStrikeOut;
 		std::string fontFamily;
 		HFONT systemFont;
 	};

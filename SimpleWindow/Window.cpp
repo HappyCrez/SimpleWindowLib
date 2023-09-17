@@ -260,10 +260,10 @@ namespace sw {
 			&widget_class_name[0], &widget_title[0], flags,
 			position.x, position.y,
 			size.x, size.y, 
-			Window::handle, (HMENU)clickEvent, NULL, NULL);
+			Window::handle, NULL, NULL, NULL);
 		
 		
-		//SendMessage(widget_handle, WM_SETFONT, WPARAM(widget.getFont().getSystemFont()), TRUE);
+		if (widget.getType() == WidgetType::TextField) SendMessageA(widget_handle, WM_SETFONT, WPARAM(widget.getFont().getSystemFont()), TRUE);
 		widget.setHandle(widget_handle);
 	}
 

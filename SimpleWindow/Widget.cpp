@@ -2,13 +2,14 @@
 #include "pch.h"
 #include "Widget.h"
 
+
 namespace sw {
-	Widget::Widget(Font textStyle, WidgetType type, Vector2u size, Vector2u position, std::string title)
+	Widget::Widget(Font textStyle, WidgetType type, Vector2u size, Vector2u position, std::string text)
 	{
 		handle = nullptr;
 		Widget::size = size;
 		Widget::position = position;
-		Widget::title = title;
+		Widget::text = text;
 		Widget::textStyle = textStyle;
 		Widget::type = type;
 		
@@ -45,6 +46,16 @@ namespace sw {
 		Widget::handle = handle;
 	}
 
+	void Widget::setText(std::string text)
+	{
+		text = SetWindowTextA(handle, &text[0]);
+	}
+
+	std::string Widget::getText()
+	{
+		return text;
+	}
+
 	Vector2u Widget::getPosition()
 	{
 		return position;
@@ -57,7 +68,7 @@ namespace sw {
 
 	std::string Widget::getTitle()
 	{
-		return title;
+		return text;
 	}
 
 	std::string Widget::getTypeName()
@@ -80,11 +91,16 @@ namespace sw {
 		return textStyle;
 	}
 
-	/*LRESULT CALLBACK Widget::processWidget(HWND handle, UINT message, WPARAM wparam, LPARAM lparam)
+	bool Widget::isClicked(Event::MouseButtonEvent& mouseClick)
 	{
-		std::cout << "true\n";
+		if (mouseClick.x > position.x &&
+			mouseClick.y > position.y &&
+			mouseClick.x < position.x + size.x &&
+			mouseClick.y < position.y + size.y)
+		{
+				return true;
+		}
+		return false;
+	}
 
-
-		return CallWindowProc(lastProc, handle, message, wparam, lparam);
-	}*/
 }

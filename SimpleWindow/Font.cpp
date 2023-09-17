@@ -4,16 +4,20 @@
 
 namespace sw
 {
-	Font::Font(TextAlign align, int size, std::string fontFamily) {
+	Font::Font(TextAlign align, int size, int weight, bool isCursive, bool isUnderline, bool isStrikeOut, std::string fontFamily) {
 		Font::align = align;
 		Font::size = size;
 		Font::fontFamily = fontFamily;
+		Font::weight = weight;
+		Font::isCursive = isCursive;
+		Font::isUnderline = isUnderline;
+		Font::isStrikeOut = isStrikeOut;
 		
 		std::wstring wFontFamily(std::begin(fontFamily), std::end(fontFamily));
 
-		Font::systemFont = CreateFont(15, 5, 0, 0,
-			FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
-			CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, VARIABLE_PITCH, &wFontFamily[0]);
+		Font::systemFont = CreateFont(size, 0, 0, 0,
+			weight, isCursive, isUnderline, isStrikeOut, OEM_CHARSET, OUT_DEFAULT_PRECIS,
+			CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY, VARIABLE_PITCH, &wFontFamily[0]);
 	}
 
 	TextAlign Font::getAlign()
