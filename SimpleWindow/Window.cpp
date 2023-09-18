@@ -169,12 +169,10 @@ namespace sw {
 			break;
 
 		case WM_COMMAND:
-			if (WidgetClickEvent)
+			if (wparam == WidgetClickEvent)
 			{
-				event.type = Event::MouseButtonPressed;
-				event.mouseClick.code = wparam;
-				event.mouseClick.x = GET_X_LPARAM(lparam);
-				event.mouseClick.y = GET_Y_LPARAM(lparam);
+				event.type = Event::ButtonClick;
+				event.button.ID = (HWND)lparam;
 				pushEvent(event);
 			}
 			break;
@@ -235,26 +233,37 @@ namespace sw {
 		Vector2u size = widget.getSize();
 
 		std::string widget_class_name = widget.getTypeName();
-		std::string widget_title = widget.getTitle();
+		std::string widget_title = widget.getText(50);
 
-		long int flags = WS_VISIBLE | WS_CHILD;
+		long int flags = getWidgetFlagsByType(widget);
+
 		HMENU wmCommandFlag = NULL;
-		switch (widget.getType())
+		if (widget.getType() == WidgetType::Button)
 		{
-		case WidgetType::Button:
 			wmCommandFlag = (HMENU)WidgetClickEvent;
-			break;
-
-		case WidgetType::Label:
-			wmCommandFlag = (HMENU)WidgetClickEvent;
-			break;
-
-		case WidgetType::TextField:
-			flags |= ES_MULTILINE;
-			flags |= WS_VSCROLL;
-			break;
+			flags |= BS_FLAT;	// Make button in 2D format (3D - std)
+			flags |= BS_NOTIFY; // Push FocusEvent to parent window
 		}
 
+		HWND widget_handle = CreateWindowA(
+			&widget_class_name[0], &widget_title[0], flags,
+			position.x, position.y,
+			size.x, size.y, 
+			Window::handle, wmCommandFlag, NULL, NULL);
+		
+		// Remove std bounds
+		SendMessage(widget_handle, WM_CHANGEUISTATE, MAKEWPARAM(UIS_SET, UISF_HIDEFOCUS), 0);
+		
+		// Set Font
+		SendMessageA(widget_handle, WM_SETFONT, WPARAM(widget.getFont().getSystemFont()), TRUE);
+		
+		// Save widget handle
+		widget.setHandle(widget_handle);
+	}
+
+	long int Window::getWidgetFlagsByType(Widget& widget)
+	{
+		long int flags = WS_VISIBLE | WS_CHILD;
 		switch (widget.getFont().getAlign())
 		{
 		case TextAlign::Center:
@@ -268,14 +277,12 @@ namespace sw {
 			break;
 		}
 
-		HWND widget_handle = CreateWindowA(
-			&widget_class_name[0], &widget_title[0], flags,
-			position.x, position.y,
-			size.x, size.y, 
-			Window::handle, wmCommandFlag, NULL, NULL);
-		
-		if (widget.getType() == WidgetType::TextField) SendMessageA(widget_handle, WM_SETFONT, WPARAM(widget.getFont().getSystemFont()), TRUE);
-		widget.setHandle(widget_handle);
+		if (widget.getType() == WidgetType::TextField)
+		{
+			flags |= ES_MULTILINE;
+			flags |= WS_VSCROLL;
+		}
+		return flags;
 	}
 
 	bool Window::isOpen()

@@ -15,45 +15,50 @@ namespace sw {
 		
 		switch (type)
 		{
-			case WidgetType::Button:
-				class_name = "button";
-				break;
-			case WidgetType::Label:
-				class_name = "static";
-				break;
-			case WidgetType::TextField:
-				class_name = "edit";
-				break;
+		case WidgetType::Button:
+			class_name = "button";
+			break;
+		case WidgetType::Label:
+			class_name = "static";
+			break;
+		case WidgetType::TextField:
+			class_name = "edit";
+			break;
 		}
 	}
 
 	void Widget::setSize(Vector2u size)
 	{
-		Widget::size = size;
 		if (!handle) return;
+		Widget::size = size;
 		SetWindowPos(handle, NULL, position.x, position.y, size.x, size.y, 0);
 	}
 
 	void Widget::setPosition(Vector2u position)
 	{
-		Widget::position = position;
 		if (!handle) return;
+		Widget::position = position;
 		SetWindowPos(handle, NULL, position.x, position.y, size.x, size.y, 0);
 	}
 
 	void Widget::setHandle(HWND handle)
 	{
+		if (!handle) return;
 		Widget::handle = handle;
 	}
 
 	void Widget::setText(std::string text)
 	{
-		text = SetWindowTextA(handle, &text[0]);
+		if (!handle) return;
+		SetWindowTextA(handle, &text[0]);
 	}
 
-	std::string Widget::getText()
+	std::string Widget::getText(int symbolsCount)
 	{
-		return text;
+		if (!handle) return text; // When window doesn't create, return title from constructor
+		char* buffer = (char*)std::calloc(symbolsCount, sizeof(char));
+		GetWindowTextA(handle, buffer, symbolsCount);
+		return buffer;
 	}
 
 	Vector2u Widget::getPosition()
@@ -64,11 +69,6 @@ namespace sw {
 	Vector2u Widget::getSize()
 	{
 		return size;
-	}
-
-	std::string Widget::getTitle()
-	{
-		return text;
 	}
 
 	std::string Widget::getTypeName()
@@ -91,16 +91,10 @@ namespace sw {
 		return textStyle;
 	}
 
-	bool Widget::isClicked(Event::MouseButtonEvent& mouseClick)
+	bool Widget::isClicked(Event& event)
 	{
-		std::cout << "click\n";
-		if (mouseClick.x > position.x &&
-			mouseClick.y > position.y &&
-			mouseClick.x < position.x + size.x &&
-			mouseClick.y < position.y + size.y)
-		{
+		if (event.button.ID == handle)
 				return true;
-		}
 		return false;
 	}
 

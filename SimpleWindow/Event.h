@@ -20,7 +20,8 @@ namespace sw {
             bool system;    // is System pressed
         };
 
-        struct TextEvent {
+        struct TextEvent
+        {
             std::uint32_t unicodeChar;
         };
 
@@ -37,6 +38,11 @@ namespace sw {
             int y;
         };
 
+        struct ButtonEvent
+        {
+            HWND ID;
+        };
+
         enum EventType
         {
             Closed,                 
@@ -51,7 +57,8 @@ namespace sw {
             MouseButtonReleased,    
             MouseMoved,             
             MouseEntered,           
-            MouseLeft,              
+            MouseLeft,
+            ButtonClick,
 
             Count // The total number of event types
         };
@@ -61,6 +68,7 @@ namespace sw {
 
         union
         {
+            ButtonEvent button;
             SizeEvent size;
             KeyEvent key;
             TextEvent text;

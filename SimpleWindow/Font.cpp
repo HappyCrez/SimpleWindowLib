@@ -17,7 +17,7 @@ namespace sw
 
 		Font::systemFont = CreateFont(size, 0, 0, 0,
 			weight, isCursive, isUnderline, isStrikeOut, OEM_CHARSET, OUT_DEFAULT_PRECIS,
-			CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY, VARIABLE_PITCH, &wFontFamily[0]);
+			CLIP_DEFAULT_PRECIS, PROOF_QUALITY, VARIABLE_PITCH, L"Courier New");
 	}
 
 	TextAlign Font::getAlign()

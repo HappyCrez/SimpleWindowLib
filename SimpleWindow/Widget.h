@@ -19,17 +19,16 @@ namespace sw {
 		Widget() : Widget(WidgetType::Label, "") { }
 		Widget(WidgetType type, std::string text) : Widget(Font(), type, Vector2u(200, 50), Vector2u(0, 0), text) { }
 		Widget(Font textStyle, WidgetType type, Vector2u size, Vector2u position, std::string text);
-		bool isClicked(Event::MouseButtonEvent& mouseClick);
+		bool isClicked(Event& event);
 
 		void setSize(Vector2u size);
 		void setPosition(Vector2u position);
 		void setHandle(HWND handle);
 		void setText(std::string text);
-		std::string getText();
+		std::string getText(int symbolsCount);
 
 		Vector2u getSize();
 		Vector2u getPosition();
-		std::string getTitle();
 		Font getFont();
 
 		HWND getHandle();

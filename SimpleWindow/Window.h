@@ -44,5 +44,8 @@ namespace sw {
 		// Event queue
 		std::queue<Event> events;
 		void pushEvent(Event& event);
+
+		// Widget
+		long int getWidgetFlagsByType(Widget& widget);
 	};
 }
