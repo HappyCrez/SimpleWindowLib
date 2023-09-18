@@ -168,6 +168,16 @@ namespace sw {
 			pushEvent(event);
 			break;
 
+		case WM_COMMAND:
+			if (WidgetClickEvent)
+			{
+				event.type = Event::MouseButtonPressed;
+				event.mouseClick.code = wparam;
+				event.mouseClick.x = GET_X_LPARAM(lparam);
+				event.mouseClick.y = GET_Y_LPARAM(lparam);
+				pushEvent(event);
+			}
+			break;
 		case WM_LBUTTONDOWN:
 		case WM_RBUTTONDOWN:
 			event.type = Event::MouseButtonPressed;
@@ -228,13 +238,15 @@ namespace sw {
 		std::string widget_title = widget.getTitle();
 
 		long int flags = WS_VISIBLE | WS_CHILD;
+		HMENU wmCommandFlag = NULL;
 		switch (widget.getType())
 		{
 		case WidgetType::Button:
-
+			wmCommandFlag = (HMENU)WidgetClickEvent;
 			break;
 
 		case WidgetType::Label:
+			wmCommandFlag = (HMENU)WidgetClickEvent;
 			break;
 
 		case WidgetType::TextField:
@@ -260,8 +272,7 @@ namespace sw {
 			&widget_class_name[0], &widget_title[0], flags,
 			position.x, position.y,
 			size.x, size.y, 
-			Window::handle, NULL, NULL, NULL);
-		
+			Window::handle, wmCommandFlag, NULL, NULL);
 		
 		if (widget.getType() == WidgetType::TextField) SendMessageA(widget_handle, WM_SETFONT, WPARAM(widget.getFont().getSystemFont()), TRUE);
 		widget.setHandle(widget_handle);

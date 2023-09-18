@@ -93,6 +93,7 @@ namespace sw {
 
 	bool Widget::isClicked(Event::MouseButtonEvent& mouseClick)
 	{
+		std::cout << "click\n";
 		if (mouseClick.x > position.x &&
 			mouseClick.y > position.y &&
 			mouseClick.x < position.x + size.x &&

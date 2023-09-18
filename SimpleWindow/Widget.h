@@ -3,7 +3,10 @@
 #include "Font.h"
 #include "Event.h"
 
+#define WidgetClickEvent 1
+
 namespace sw {
+
 	enum WidgetType
 	{
 		Button,
@@ -16,7 +19,6 @@ namespace sw {
 		Widget() : Widget(WidgetType::Label, "") { }
 		Widget(WidgetType type, std::string text) : Widget(Font(), type, Vector2u(200, 50), Vector2u(0, 0), text) { }
 		Widget(Font textStyle, WidgetType type, Vector2u size, Vector2u position, std::string text);
-
 		bool isClicked(Event::MouseButtonEvent& mouseClick);
 
 		void setSize(Vector2u size);
