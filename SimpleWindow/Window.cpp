@@ -104,18 +104,23 @@ namespace sw {
 
 		switch (message)
 		{
-
 		// Window on close
 		case WM_CLOSE:
 			event.type = Event::Closed;
 			pushEvent(event);
 			break;
-			// Window Resize
+
+		// Window Resize
 		case WM_SIZE:
 			event.type = Event::Resized;
 			last_size = getSize();
 			event.size.width = last_size.x;
 			event.size.height = last_size.y;
+			pushEvent(event);
+			break;
+
+		case WM_PAINT:
+			event.type = Event::Paint;
 			pushEvent(event);
 			break;
 
@@ -163,19 +168,11 @@ namespace sw {
 
 		case WM_MOUSEMOVE:
 			event.type = Event::MouseMoved;
-			event.mouse.x = GET_X_LPARAM(lparam);
-			event.mouse.y = GET_Y_LPARAM(lparam);
+			event.mouseMove.x = GET_X_LPARAM(lparam);
+			event.mouseMove.y = GET_Y_LPARAM(lparam);
 			pushEvent(event);
 			break;
 
-		case WM_COMMAND:
-			if (wparam == WidgetClickEvent)
-			{
-				event.type = Event::ButtonClick;
-				event.button.ID = (HWND)lparam;
-				pushEvent(event);
-			}
-			break;
 		case WM_LBUTTONDOWN:
 		case WM_RBUTTONDOWN:
 			event.type = Event::MouseButtonPressed;
@@ -192,6 +189,31 @@ namespace sw {
 			event.mouseClick.x = GET_X_LPARAM(lparam);
 			event.mouseClick.y = GET_Y_LPARAM(lparam);
 			pushEvent(event);
+			break;
+
+		case WM_MOUSEHWHEEL:
+			event.type = Event::MouseWheelScrolled;
+			event.mouseScroll.z = GET_WHEEL_DELTA_WPARAM(wparam);
+			pushEvent(event);
+			break;
+
+		case WM_MOUSELEAVE:
+			event.type = Event::MouseLeft;
+			pushEvent(event);
+			break;
+
+		case WM_MOUSEHOVER:
+			event.type = Event::MouseEntered;
+			pushEvent(event);
+			break;
+
+		case WM_COMMAND:
+			if (wparam == WidgetClickEvent)
+			{
+				event.type = Event::ButtonClick;
+				event.button.ID = (HWND)lparam;
+				pushEvent(event);
+			}
 			break;
 		}
 	}
@@ -252,7 +274,7 @@ namespace sw {
 			Window::handle, wmCommandFlag, NULL, NULL);
 		
 		// Remove std bounds
-		SendMessage(widget_handle, WM_CHANGEUISTATE, MAKEWPARAM(UIS_SET, UISF_HIDEFOCUS), 0);
+		SendMessageA(widget_handle, WM_CHANGEUISTATE, MAKEWPARAM(UIS_SET, UISF_HIDEFOCUS), 0);
 		
 		// Set Font
 		SendMessageA(widget_handle, WM_SETFONT, WPARAM(widget.getFont().getSystemFont()), TRUE);
@@ -282,6 +304,7 @@ namespace sw {
 			flags |= ES_MULTILINE;
 			flags |= WS_VSCROLL;
 		}
+
 		return flags;
 	}
 

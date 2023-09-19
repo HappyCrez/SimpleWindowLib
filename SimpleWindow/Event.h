@@ -38,6 +38,11 @@ namespace sw {
             int y;
         };
 
+        struct MouseScrollEvent
+        {
+            int z;
+        };
+
         struct ButtonEvent
         {
             HWND ID;
@@ -52,13 +57,14 @@ namespace sw {
             TextEntered,            
             KeyPressed,             
             KeyReleased,            
-            MouseWheelScrolled,     
+            MouseWheelScrolled, 
             MouseButtonPressed,     
             MouseButtonReleased,    
             MouseMoved,             
             MouseEntered,           
             MouseLeft,
             ButtonClick,
+            Paint,
 
             Count // The total number of event types
         };
@@ -68,12 +74,13 @@ namespace sw {
 
         union
         {
+            MouseScrollEvent mouseScroll;
             ButtonEvent button;
             SizeEvent size;
             KeyEvent key;
             TextEvent text;
             MouseButtonEvent mouseClick;
-            MouseMovedEvent mouse;
+            MouseMovedEvent mouseMove;
         };
     };
 }

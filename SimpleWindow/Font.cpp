@@ -12,12 +12,10 @@ namespace sw
 		Font::isCursive = isCursive;
 		Font::isUnderline = isUnderline;
 		Font::isStrikeOut = isStrikeOut;
-		
-		std::wstring wFontFamily(std::begin(fontFamily), std::end(fontFamily));
 
-		Font::systemFont = CreateFont(size, 0, 0, 0,
+		Font::systemFont = CreateFontA(size, 0, 0, 0,
 			weight, isCursive, isUnderline, isStrikeOut, OEM_CHARSET, OUT_DEFAULT_PRECIS,
-			CLIP_DEFAULT_PRECIS, PROOF_QUALITY, VARIABLE_PITCH, L"Courier New");
+			CLIP_DEFAULT_PRECIS, PROOF_QUALITY, VARIABLE_PITCH, &fontFamily[0]);
 	}
 
 	TextAlign Font::getAlign()
