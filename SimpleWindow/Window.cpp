@@ -4,42 +4,52 @@
 #include "Window.h"
 
 namespace sw {
-	static int window_count = 0;	// Windows owned by SWL
-	Vector2u last_size;					// Window lastSize
+	static int window_count = 0; // Windows owned by SWL
+	Vector2u last_size;	// Window lastSize
 	const wchar_t* class_name = L"SWM_Window";
 
-	Window::Window(Vector2u position, Vector2u size, std::string title)
+	void initWindowZeroParams(Window& window)
 	{
-		if (window_count == 0)
-			createAndRegisterWindowClass();
-		++window_count;
-
-		handle = createWin(position, size, title);
-		ShowWindow(handle, SW_SHOW);
-
-		processEvents();
+		initWindowTwoParams(window, Vector2u(1200, 800), "Hello world");
 	}
 
-	void Window::createAndRegisterWindowClass()
+	void initWindowTwoParams(Window& window, Vector2u size, std::string title)
 	{
-		WNDCLASS winClass = Window::createWindowClass();
+		initWindowThreeParams(window, Vector2u(0, 0), size, title);
+	}
+
+	void initWindowThreeParams(Window& window, Vector2u position, Vector2u size, std::string title)
+	{
+		if (window_count == 0)
+			createAndRegisterWindowClass(window);
+		++window_count;
+
+		window.handle = createWin(&window, position, size, title);
+		ShowWindow(window.handle, SW_SHOW);
+
+		processEvents(window);
+	}
+
+	void createAndRegisterWindowClass(Window& window)
+	{
+		WNDCLASS winClass = createWindowClass(window);
 		RegisterClassW(&winClass);
 	}
 
-	WNDCLASS Window::createWindowClass()
+	WNDCLASS createWindowClass(Window& window)
 	{
 		WNDCLASS winClass = { };
-		winClass.hIcon			= LoadIcon(NULL, IDI_APPLICATION);
-		winClass.hCursor		= LoadCursor(NULL, IDC_ARROW);
-		winClass.hInstance		= GetModuleHandle(nullptr);
-		winClass.hbrBackground	= (HBRUSH)COLOR_WINDOW;
-		winClass.lpszClassName	= class_name;
-		winClass.lpfnWndProc	= winProcedure;
+		winClass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+		winClass.hCursor = LoadCursor(NULL, IDC_ARROW);
+		winClass.hInstance = GetModuleHandle(nullptr);
+		winClass.hbrBackground = (HBRUSH)COLOR_WINDOW;
+		winClass.lpszClassName = class_name;
+		winClass.lpfnWndProc = winProcedure;
 
 		return winClass;
 	}
 
-	HWND Window::createWin(Vector2u position, Vector2u size, std::string title)
+	HWND createWin(Window* window, Vector2u position, Vector2u size, std::string title)
 	{
 		// convert string to wstring and use as wchar_t *
 		std::wstring wTitle(std::begin(title), std::end(title));
@@ -56,11 +66,11 @@ namespace sw {
 			NULL,						
 			NULL,						
 			GetModuleHandle(nullptr),	
-			this						
+			window
 		);
 	}
 
-	LRESULT CALLBACK Window::winProcedure(HWND handle, UINT message, WPARAM wparam, LPARAM lparam)
+	LRESULT CALLBACK winProcedure(HWND handle, UINT message, WPARAM wparam, LPARAM lparam)
 	{
 		if (message == WM_NCCREATE)
 		{
@@ -72,7 +82,7 @@ namespace sw {
 
 		if (window)
 		{
-			window->processEvent(message, wparam, lparam);
+			processEvent(window, message, wparam, lparam);
 		}
 
 		if (message == WM_DESTROY)
@@ -96,9 +106,19 @@ namespace sw {
 		return DefWindowProc(handle, message, wparam, lparam);
 	}
 
-	void Window::processEvent(UINT message, WPARAM wparam, LPARAM lparam)
+	void processEvents(Window& window)
 	{
-		if (!handle) return;
+		MSG message = { };
+
+		while (PeekMessageW(&message, NULL, 0, 0, PM_REMOVE)) {
+			TranslateMessage(&message);
+			DispatchMessage(&message);
+		}
+	}
+
+	void processEvent(Window* window, UINT message, WPARAM wparam, LPARAM lparam)
+	{
+		if (!window->handle) return;
 		std::uint32_t character;
 		Event event;
 
@@ -107,33 +127,33 @@ namespace sw {
 		// Window on close
 		case WM_CLOSE:
 			event.type = Event::Closed;
-			pushEvent(event);
+			pushEvent(window, event);
 			break;
 
 		// Window Resize
 		case WM_SIZE:
 			event.type = Event::Resized;
-			last_size = getSize();
+			last_size = window->size;
 			event.size.width = last_size.x;
 			event.size.height = last_size.y;
-			pushEvent(event);
+			pushEvent(window, event);
 			break;
 
 		case WM_PAINT:
 			event.type = Event::Paint;
-			pushEvent(event);
+			pushEvent(window, event);
 			break;
 
 			// Window get focus
 		case WM_SETFOCUS:
 			event.type = Event::GainedFocus;
-			pushEvent(event);
+			pushEvent(window, event);
 			break;
 
 			// Window lost focus
 		case WM_KILLFOCUS:
 			event.type = Event::LostFocus;
-			pushEvent(event);
+			pushEvent(window, event);
 			break;
 
 			// Text entere
@@ -141,7 +161,7 @@ namespace sw {
 			character = static_cast<std::uint32_t>(wparam);
 			event.type = Event::TextEntered;
 			event.text.unicodeChar = character; // change to keyCode
-			pushEvent(event);
+			pushEvent(window, event);
 			break;
 
 		case WM_KEYDOWN:
@@ -152,7 +172,7 @@ namespace sw {
 			event.key.control	= HIWORD(GetKeyState(VK_CONTROL)) != 0;
 			event.key.shift		= HIWORD(GetKeyState(VK_SHIFT)) != 0;
 			event.key.system	= HIWORD(GetKeyState(VK_LWIN)) || HIWORD(GetKeyState(VK_RWIN));
-			pushEvent(event);
+			pushEvent(window, event);
 			break;
 
 		case WM_KEYUP:
@@ -163,14 +183,14 @@ namespace sw {
 			event.key.control	= HIWORD(GetKeyState(VK_CONTROL)) != 0;
 			event.key.shift		= HIWORD(GetKeyState(VK_SHIFT)) != 0;
 			event.key.system	= HIWORD(GetKeyState(VK_LWIN)) || HIWORD(GetKeyState(VK_RWIN));
-			pushEvent(event);
+			pushEvent(window, event);
 			break;
 
 		case WM_MOUSEMOVE:
 			event.type = Event::MouseMoved;
 			event.mouseMove.x = GET_X_LPARAM(lparam);
 			event.mouseMove.y = GET_Y_LPARAM(lparam);
-			pushEvent(event);
+			pushEvent(window, event);
 			break;
 
 		case WM_LBUTTONDOWN:
@@ -179,7 +199,7 @@ namespace sw {
 			event.mouseClick.code = wparam;
 			event.mouseClick.x = GET_X_LPARAM(lparam);
 			event.mouseClick.y = GET_Y_LPARAM(lparam);
-			pushEvent(event);
+			pushEvent(window, event);
 			break;
 
 		case WM_LBUTTONUP:
@@ -188,23 +208,23 @@ namespace sw {
 			event.mouseClick.code = wparam;
 			event.mouseClick.x = GET_X_LPARAM(lparam);
 			event.mouseClick.y = GET_Y_LPARAM(lparam);
-			pushEvent(event);
+			pushEvent(window, event);
 			break;
 
 		case WM_MOUSEHWHEEL:
 			event.type = Event::MouseWheelScrolled;
 			event.mouseScroll.z = GET_WHEEL_DELTA_WPARAM(wparam);
-			pushEvent(event);
+			pushEvent(window, event);
 			break;
 
 		case WM_MOUSELEAVE:
 			event.type = Event::MouseLeft;
-			pushEvent(event);
+			pushEvent(window, event);
 			break;
 
 		case WM_MOUSEHOVER:
 			event.type = Event::MouseEntered;
-			pushEvent(event);
+			pushEvent(window, event);
 			break;
 
 		case WM_COMMAND:
@@ -212,44 +232,34 @@ namespace sw {
 			{
 				event.type = Event::ButtonClick;
 				event.button.ID = (HWND)lparam;
-				pushEvent(event);
+				pushEvent(window, event);
 			}
 			break;
 		}
 	}
 
-	bool Window::pollEvent(Event& event)
+	bool pollEvent(Window& window, Event& event)
 	{
-		if (events.empty())
+		if (window.events.empty())
 		{
-			processEvents();
+			processEvents(window);
 
 			return false;
 		}
 		else {
-			event = events.front();
-			events.pop();
+			event = window.events.front();
+			window.events.pop();
 
 			return true;
 		}
 	}
 
-	void Window::processEvents()
+	void pushEvent(Window* window, Event& event)
 	{
-		MSG message = { };
-
-		while (PeekMessageW(&message, NULL, 0, 0, PM_REMOVE)) {
-			TranslateMessage(&message);
-			DispatchMessage(&message);
-		}
+		window->events.push(event);
 	}
 
-	void Window::pushEvent(Event& event)
-	{
-		events.push(event);
-	}
-
-	void Window::add(Widget& widget)
+	void add(Window& window, Widget& widget)
 	{
 		Vector2u position = widget.getPosition();
 		Vector2u size = widget.getSize();
@@ -271,7 +281,7 @@ namespace sw {
 			&widget_class_name[0], &widget_title[0], flags,
 			position.x, position.y,
 			size.x, size.y, 
-			Window::handle, wmCommandFlag, NULL, NULL);
+			window.handle, wmCommandFlag, NULL, NULL);
 		
 		// Remove std bounds
 		SendMessageA(widget_handle, WM_CHANGEUISTATE, MAKEWPARAM(UIS_SET, UISF_HIDEFOCUS), 0);
@@ -283,7 +293,7 @@ namespace sw {
 		widget.setHandle(widget_handle);
 	}
 
-	long int Window::getWidgetFlagsByType(Widget& widget)
+	long int getWidgetFlagsByType(Widget& widget)
 	{
 		long int flags = WS_VISIBLE | WS_CHILD;
 		switch (widget.getFont().getAlign())
@@ -308,44 +318,44 @@ namespace sw {
 		return flags;
 	}
 
-	bool Window::isOpen()
+	bool isOpen(Window& window)
 	{
-		return handle != nullptr;
+		return window.handle != nullptr;
 	}
 
-	void Window::close()
+	void close(Window& window)
 	{
-		handle = nullptr;
+		window.handle = nullptr;
 	}
 
-	void Window::setParams(Vector2u& position, Vector2u& size) {
-		if (!handle) return;
-		setPosition(position);
-		setSize(size);
+	void setParams(Window& window, Vector2u& position, Vector2u& size) {
+		if (!window.handle) return;
+		setPosition(window, position);
+		setSize(window, size);
 	}
 
-	void Window::setPosition(Vector2u& position)
+	void setPosition(Window& window, Vector2u& position)
 	{
-		if (!handle) return;
-		SetWindowPos(handle, NULL, position.x, position.y, size.x, size.y, 0);
+		if (!window.handle) return;
+		SetWindowPos(window.handle, NULL, position.x, position.y, window.size.x, window.size.y, 0);
 	}
 		
-	void Window::setSize(Vector2u& size)
+	void setSize(Window& window, Vector2u& size)
 	{
-		if (!handle) return;
-		SetWindowPos(handle, NULL, position.x, position.y, size.x, size.y, 0);
+		if (!window.handle) return;
+		SetWindowPos(window.handle, NULL, window.position.x, window.position.y, size.x, size.y, 0);
 	}
 
-	Vector2u Window::getSize()
+	Vector2u getSize(Window& window)
 	{
-		if (!handle) return Vector2u();
+		if (!window.handle) return Vector2u();
 		RECT rect;
-		GetClientRect(handle, &rect);
+		GetClientRect(window.handle, &rect);
 		return Vector2u(static_cast<unsigned int>(rect.right - rect.left), static_cast<unsigned int>(rect.bottom - rect.top));;
 	}
 
-	HWND Window::getHandle()
+	HWND getHandle(Window& window)
 	{
-		return handle;
+		return window.handle;
 	}
 }
