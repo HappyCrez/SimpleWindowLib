@@ -7,9 +7,8 @@
 
 	int main()
 	{
-
 		sw::Vector2u win_size{700, 500};
-		sw::Vector2u win_locate{600, 300};
+		sw::Vector2i win_locate{600, 300};
 		char win_title [10] = "My title\0";
 
 		sw::Vector2u btn_size{200, 50};
@@ -69,6 +68,8 @@
 		rect.right = 100;
 		rect.bottom = 100;
 		// endblock::win32api
+
+		char empty[2] = "\0";
 		while (sw::windowIsOpen(window))
 		{
 			sw::Event event;
@@ -105,7 +106,6 @@
 				case sw::Event::ButtonClick:
 					if (buttonIsClicked(btn_clear, event))
 					{
-						char empty[2] = "\0";
 						widgetSetText(text_field, empty);
 					}
 					if (buttonIsClicked(btn_save, event))
