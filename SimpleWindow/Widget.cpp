@@ -4,96 +4,76 @@
 
 
 namespace sw {
-	Widget::Widget(Font textStyle, WidgetType type, Vector2u size, Vector2u position, std::string text)
+
+	void initWidgetZeroParams(Widget& widget)
 	{
-		handle = nullptr;
-		Widget::size = size;
-		Widget::position = position;
-		Widget::text = text;
-		Widget::textStyle = textStyle;
-		Widget::type = type;
-		
+		initWidgetTwoParams(widget, WidgetType::Label, "");
+	}
+
+	void initWidgetTwoParams(Widget& widget, WidgetType type, std::string title)
+	{
+		initWidget(widget, Font(), type, Vector2u(200, 50), Vector2u(0, 0), title);
+	}
+
+	void initWidget(Widget& widget, Font textStyle, WidgetType type, Vector2u size, Vector2u position, std::string title)
+	{
+		widget.handle = nullptr;
+		widget.size = size;
+		widget.position = position;
+		widget.title = title;
+		widget.textStyle = textStyle;
+		widget.type = type;
+		widget.class_name = widgetGetClassNameByType(type);
+	}
+
+	std::string widgetGetClassNameByType(WidgetType type) {
 		switch (type)
 		{
 		case WidgetType::Button:
-			class_name = "button";
+			return "button";
 			break;
 		case WidgetType::Label:
-			class_name = "static";
+			return "static";
 			break;
 		case WidgetType::TextField:
-			class_name = "edit";
+			return "edit";
 			break;
+		default:
+			exit(UNDEFINED_WIDGET_TYPE);
 		}
 	}
 
-	void Widget::setSize(Vector2u size)
+	void widgetSetSize(Widget& widget, Vector2u size)
 	{
-		if (!handle) return;
-		Widget::size = size;
-		SetWindowPos(handle, NULL, position.x, position.y, size.x, size.y, 0);
+		if (!widget.handle) return;
+		widget.size = size;
+		SetWindowPos(widget.handle, NULL, widget.position.x, widget.position.y, size.x, size.y, 0);
 	}
 
-	void Widget::setPosition(Vector2u position)
+	void widgetSetPosition(Widget& widget, Vector2u position)
 	{
-		if (!handle) return;
-		Widget::position = position;
-		SetWindowPos(handle, NULL, position.x, position.y, size.x, size.y, 0);
+		if (!widget.handle) return;
+		widget.position = position;
+		SetWindowPos(widget.handle, NULL, position.x, position.y, widget.size.x, widget.size.y, 0);
 	}
 
-	void Widget::setHandle(HWND handle)
+	void widgetSetText(Widget& widget, std::string title)
 	{
-		if (!handle) return;
-		Widget::handle = handle;
+		if (!widget.handle) return;
+		SetWindowTextA(widget.handle, &title[0]);
 	}
 
-	void Widget::setText(std::string text)
+	std::string widgetGetText(Widget& widget, int symbolsCount)
 	{
-		if (!handle) return;
-		SetWindowTextA(handle, &text[0]);
-	}
-
-	std::string Widget::getText(int symbolsCount)
-	{
-		if (!handle) return text; // When window doesn't create, return title from constructor
+		if (!widget.handle) return widget.title; // When window doesn't create, return title from constructor
 		char* buffer = (char*)std::calloc(symbolsCount, sizeof(char));
-		GetWindowTextA(handle, buffer, symbolsCount);
+		GetWindowTextA(widget.handle, buffer, symbolsCount);
 		return buffer;
 	}
 
-	Vector2u Widget::getPosition()
+	bool widgetIsClicked(Widget& widget, Event& event)
 	{
-		return position;
-	}
-
-	Vector2u Widget::getSize()
-	{
-		return size;
-	}
-
-	std::string Widget::getTypeName()
-	{
-		return class_name;
-	}
-
-	HWND Widget::getHandle()
-	{
-		return handle;
-	}
-
-	int Widget::getType()
-	{
-		return type;
-	}
-
-	Font Widget::getFont()
-	{
-		return textStyle;
-	}
-
-	bool Widget::isClicked(Event& event)
-	{
-		if (event.button.ID == handle)
+		if (event.button.ID == widget.handle)
 				return true;
 		return false;
 	}

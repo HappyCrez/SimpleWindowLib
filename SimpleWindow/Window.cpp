@@ -160,7 +160,7 @@ namespace sw {
 		case WM_CHAR:
 			character = static_cast<std::uint32_t>(wparam);
 			event.type = Event::TextEntered;
-			event.text.unicodeChar = character; // change to keyCode
+			event.title.unicodeChar = character; // change to keyCode
 			pushEvent(window, event);
 			break;
 
@@ -228,7 +228,7 @@ namespace sw {
 			break;
 
 		case WM_COMMAND:
-			if (wparam == WidgetClickEvent)
+			if (wparam == WidgetButtonClickEvent)
 			{
 				event.type = Event::ButtonClick;
 				event.button.ID = (HWND)lparam;
@@ -261,42 +261,41 @@ namespace sw {
 
 	void add(Window& window, Widget& widget)
 	{
-		Vector2u position = widget.getPosition();
-		Vector2u size = widget.getSize();
+		Vector2u widget_position = widget.position;
+		Vector2u widget_size = widget.size;
 
-		std::string widget_class_name = widget.getTypeName();
-		std::string widget_title = widget.getText(50);
+		std::string widget_class_name = widgetGetClassNameByType(widget.type);
+		std::string widget_title = widget.title;
+		Font widget_font = widget.textStyle;
+		WidgetType widget_type = widget.type;
 
-		long int flags = getWidgetFlagsByType(widget);
+		long int flags = getWidgetFlagsByType(widget_type, widget_font);
 
 		HMENU wmCommandFlag = NULL;
-		if (widget.getType() == WidgetType::Button)
+		if (widget.type == WidgetType::Button)
 		{
-			wmCommandFlag = (HMENU)WidgetClickEvent;
-			flags |= BS_FLAT;	// Make button in 2D format (3D - std)
-			flags |= BS_NOTIFY; // Push FocusEvent to parent window
+			wmCommandFlag = (HMENU)WidgetButtonClickEvent;
 		}
 
 		HWND widget_handle = CreateWindowA(
 			&widget_class_name[0], &widget_title[0], flags,
-			position.x, position.y,
-			size.x, size.y, 
+			widget_position.x, widget_position.y,
+			widget_size.x, widget_size.y, 
 			window.handle, wmCommandFlag, NULL, NULL);
 		
 		// Remove std bounds
 		SendMessageA(widget_handle, WM_CHANGEUISTATE, MAKEWPARAM(UIS_SET, UISF_HIDEFOCUS), 0);
 		
 		// Set Font
-		SendMessageA(widget_handle, WM_SETFONT, WPARAM(widget.getFont().getSystemFont()), TRUE);
-		
-		// Save widget handle
-		widget.setHandle(widget_handle);
+		SendMessageA(widget_handle, WM_SETFONT, WPARAM(widget_font.getSystemFont()), TRUE);
+
+		widget.handle = widget_handle;
 	}
 
-	long int getWidgetFlagsByType(Widget& widget)
+	long int getWidgetFlagsByType(WidgetType widgetType, Font widgetFont)
 	{
 		long int flags = WS_VISIBLE | WS_CHILD;
-		switch (widget.getFont().getAlign())
+		switch (widgetFont.getAlign())
 		{
 		case TextAlign::Center:
 			flags |= ES_CENTER;
@@ -309,10 +308,16 @@ namespace sw {
 			break;
 		}
 
-		if (widget.getType() == WidgetType::TextField)
+		switch (widgetType)
 		{
-			flags |= ES_MULTILINE;
-			flags |= WS_VSCROLL;
+			case WidgetType::TextField:
+				flags |= ES_MULTILINE;
+				flags |= WS_VSCROLL;
+				break;
+			case WidgetType::Button:
+				flags |= BS_FLAT;	// Make button in 2D format (3D - std)
+				flags |= BS_NOTIFY; // Push FocusEvent to parent window
+				break;
 		}
 
 		return flags;

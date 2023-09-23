@@ -8,6 +8,8 @@
 #define simple_window_api __declspec(dllimport)
 #endif
 
+#define UNDEFINED_WIDGET_TYPE -1
+
 // Precompiled headers
 #include "framework.h"
 #include "MathSWM.h"

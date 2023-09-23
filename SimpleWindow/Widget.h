@@ -3,7 +3,7 @@
 #include "Font.h"
 #include "Event.h"
 
-#define WidgetClickEvent 1
+#define WidgetButtonClickEvent 1
 
 namespace sw {
 
@@ -14,36 +14,38 @@ namespace sw {
 		TextField
 	};
 
-	class simple_window_api Widget {
-	public:
-		Widget() : Widget(WidgetType::Label, "") { }
-		Widget(WidgetType type, std::string text) : Widget(Font(), type, Vector2u(200, 50), Vector2u(0, 0), text) { }
-		Widget(Font textStyle, WidgetType type, Vector2u size, Vector2u position, std::string text);
-		bool isClicked(Event& event);
-
-		void setSize(Vector2u size);
-		void setPosition(Vector2u position);
-		void setHandle(HWND handle);
-		void setText(std::string text);
-		std::string getText(int symbolsCount);
-
-		Vector2u getSize();
-		Vector2u getPosition();
-		Font getFont();
-
-		HWND getHandle();
-		std::string getTypeName();
-		int getType();
-
-	private:
+	struct simple_window_api Widget
+	{
 		HWND handle;
 
-		WidgetType type;
 		std::string class_name;
+		WidgetType type;
 		
-		std::string text;
+		std::string title;
+		Font textStyle;
 		Vector2u size;
 		Vector2u position;
-		Font textStyle;
 	};
+
+	extern "C" simple_window_api
+	void initWidgetZeroParams(Widget& widget);
+	extern "C" simple_window_api
+	void initWidgetTwoParams(Widget& widget, WidgetType type, std::string title);
+	extern "C" simple_window_api
+	void initWidget(Widget& widget, Font textStyle, WidgetType type, Vector2u size, Vector2u position, std::string title);
+	extern "C" simple_window_api
+	bool widgetIsClicked(Widget& widget, Event& event);
+
+	extern "C" simple_window_api
+	void widgetSetSize(Widget& widget, Vector2u size);
+	extern "C" simple_window_api
+	void widgetSetPosition(Widget& widget, Vector2u position);
+
+	extern "C" simple_window_api
+	void widgetSetText(Widget& widget, std::string title);
+	extern "C" simple_window_api
+	std::string widgetGetText(Widget& widget, int symbolsCount);
+
+	extern "C" simple_window_api
+	std::string widgetGetClassNameByType(WidgetType type);
 }

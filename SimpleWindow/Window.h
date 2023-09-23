@@ -54,5 +54,5 @@ namespace sw {
 	extern "C" simple_window_api
 	void add(Window& window, Widget& widget);
 	extern "C" simple_window_api
-	long int getWidgetFlagsByType(Widget& widget);
+	long int getWidgetFlagsByType(WidgetType widgetType, Font widgetFont);
 }
