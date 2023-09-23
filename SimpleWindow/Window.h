@@ -31,7 +31,7 @@ namespace sw {
 	extern "C" simple_window_api
 	void initWindowTwoParams(Window& window, Vector2u size, char* title);
 	extern "C" simple_window_api
-	void initWindow(Window& window, Vector2u position, Vector2u size, char* title);
+	void initWindow(Window& window, Vector2i position, Vector2u size, char* title);
 
 	extern "C" simple_window_api
 	void createAndRegisterWindowClass(Window& window);
@@ -39,7 +39,7 @@ namespace sw {
 	WNDCLASS createWindowClass(Window& window);
 
 	extern "C" simple_window_api
-	HWND windowCreate(Window* window, Vector2u position, Vector2u size, char* title);
+	HWND windowCreate(Window* window, Vector2i position, Vector2u size, char* title);
 	extern "C" simple_window_api
 	LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
 

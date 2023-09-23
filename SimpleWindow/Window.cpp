@@ -16,11 +16,13 @@ namespace sw {
 
 	void initWindowTwoParams(Window& window, Vector2u size, char* title)
 	{
-		initWindow(window, Vector2u{ 0, 0 }, size, title);
+		initWindow(window, Vector2i{ 0, 0 }, size, title);
 	}
 
-	void initWindow(Window& window, Vector2u position, Vector2u size, char* title)
+	void initWindow(Window& window, Vector2i position, Vector2u size, char* title)
 	{
+		window.position = position;
+		window.size = size;
 		window.title = title;
 
 		if (window_count == 0)
@@ -52,7 +54,7 @@ namespace sw {
 		return window_class;
 	}
 
-	HWND windowCreate(Window* window, Vector2u position, Vector2u size, char* title)
+	HWND windowCreate(Window* window, Vector2i position, Vector2u size, char* title)
 	{
 		// convert char* to wchar_t *
 		wchar_t* wtitle = (wchar_t*)calloc(strlen(title) + 1, sizeof(wchar_t));
