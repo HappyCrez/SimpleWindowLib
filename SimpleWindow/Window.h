@@ -6,31 +6,32 @@
 namespace sw {
 
 	struct simple_window_api Window {
-		Vector2u position;
-		Vector2u size;
 		HWND handle = nullptr;
-		std::string title;
 		std::queue<Event> events;
+		
+		Vector2i position;
+		Vector2u size;
+		std::string title;
 	};
 
 	extern "C" simple_window_api
-	bool isOpen(Window& window);
+	bool windowIsOpen(Window& window);
 	extern "C" simple_window_api
-	void close(Window& window);
+	void windowClose(Window& window);
 
 	extern "C" simple_window_api
-	void setSize(Window& window, Vector2u& size);
+	void windowSetSize(Window& window, Vector2u& size);
 	extern "C" simple_window_api
-	void setPosition(Window& window, Vector2u& position);
+	void windowSetPosition(Window& window, Vector2i& position);
 	extern "C" simple_window_api
-	void setParams(Window& window, Vector2u& position, Vector2u& size);
+	void windowSetPositionAndSize(Window& window, Vector2i& position, Vector2u& size);
 
 	extern "C" simple_window_api
 	void initWindowZeroParams(Window& window);
 	extern "C" simple_window_api
 	void initWindowTwoParams(Window& window, Vector2u size, std::string title);
 	extern "C" simple_window_api
-	void initWindowThreeParams(Window& window, Vector2u position, Vector2u size, std::string title);
+	void initWindow(Window& window, Vector2u position, Vector2u size, std::string title);
 
 	extern "C" simple_window_api
 	void createAndRegisterWindowClass(Window& window);
@@ -38,21 +39,21 @@ namespace sw {
 	WNDCLASS createWindowClass(Window& window);
 
 	extern "C" simple_window_api
-	HWND createWin(Window* window, Vector2u position, Vector2u size, std::string title);
+	HWND windowCreate(Window* window, Vector2u position, Vector2u size, std::string title);
 	extern "C" simple_window_api
-	LRESULT CALLBACK winProcedure(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
+	LRESULT CALLBACK windowProcedure(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
 
 	extern "C" simple_window_api
-	void pushEvent(Window* window, Event& event);
+	void windowPushEvent(Window* window, Event& event);
 	extern "C" simple_window_api
-	bool pollEvent(Window& window, Event& event);
+	bool windowPollEvent(Window& window, Event& event);
 	extern "C" simple_window_api
-	void processEvents(Window& window);
+	void windowProcessEvents(Window& window);
 	extern "C" simple_window_api
-	void processEvent(Window* window, UINT message, WPARAM wparam, LPARAM lparam);
+	void windowProcessEvent(Window* window, UINT message, WPARAM wparam, LPARAM lparam);
 
 	extern "C" simple_window_api
-	void add(Window& window, Widget& widget);
+	void windowAddWidget(Window& window, Widget& widget);
 	extern "C" simple_window_api
 	long int getWidgetFlagsByType(WidgetType widgetType, Font widgetFont);
 }

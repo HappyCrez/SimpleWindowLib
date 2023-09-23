@@ -62,7 +62,7 @@ namespace sw {
             MouseButtonReleased,    
             MouseMoved,             
             MouseEntered,           
-            MouseLeft,
+            MouseEntereOrLeft,
             ButtonClick,
             Paint,
 
