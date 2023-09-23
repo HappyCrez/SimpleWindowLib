@@ -62,7 +62,7 @@ namespace sw {
             MouseButtonReleased,    
             MouseMoved,             
             MouseEntered,           
-            MouseLeft,
+            MouseEntereOrLeft,
             ButtonClick,
             Paint,
 
@@ -74,12 +74,12 @@ namespace sw {
 
         union
         {
-            MouseScrollEvent mouseScroll;
+            MouseScrollEvent mouse_scroll;
             ButtonEvent button;
             SizeEvent size;
             KeyEvent key;
             TextEvent text;
-            MouseButtonEvent mouseClick;
+            MouseButtonEvent mouse_click;
             MouseMovedEvent mouseMove;
         };
     };

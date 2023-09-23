@@ -4,13 +4,13 @@
 
 
 namespace sw {
-	Widget::Widget(Font textStyle, WidgetType type, Vector2u size, Vector2u position, std::string text)
+	Widget::Widget(Font text_style, WidgetType type, Vector2u size, Vector2u position, std::string text)
 	{
 		handle = nullptr;
 		Widget::size = size;
 		Widget::position = position;
 		Widget::text = text;
-		Widget::textStyle = textStyle;
+		Widget::text_style = text_style;
 		Widget::type = type;
 		
 		switch (type)
@@ -88,7 +88,7 @@ namespace sw {
 
 	Font Widget::getFont()
 	{
-		return textStyle;
+		return text_style;
 	}
 
 	bool Widget::isClicked(Event& event)

@@ -4,18 +4,18 @@
 
 namespace sw
 {
-	Font::Font(TextAlign align, int size, int weight, bool isCursive, bool isUnderline, bool isStrikeOut, std::string fontFamily) {
+	Font::Font(TextAlign align, int size, int weight, bool is_cursive, bool is_underline, bool is_strikeOut, std::string font_family) {
 		Font::align = align;
 		Font::size = size;
-		Font::fontFamily = fontFamily;
+		Font::font_family = font_family;
 		Font::weight = weight;
-		Font::isCursive = isCursive;
-		Font::isUnderline = isUnderline;
-		Font::isStrikeOut = isStrikeOut;
+		Font::is_cursive = is_cursive;
+		Font::is_underline = is_underline;
+		Font::is_strikeOut = is_strikeOut;
 
-		Font::systemFont = CreateFontA(size, 0, 0, 0,
-			weight, isCursive, isUnderline, isStrikeOut, OEM_CHARSET, OUT_DEFAULT_PRECIS,
-			CLIP_DEFAULT_PRECIS, PROOF_QUALITY, VARIABLE_PITCH, &fontFamily[0]);
+		Font::system_font = CreateFontA(size, 0, 0, 0,
+			weight, is_cursive, is_underline, is_strikeOut, OEM_CHARSET, OUT_DEFAULT_PRECIS,
+			CLIP_DEFAULT_PRECIS, PROOF_QUALITY, VARIABLE_PITCH, &font_family[0]);
 	}
 
 	TextAlign Font::getAlign()
@@ -29,6 +29,6 @@ namespace sw
 	}
 
 	HFONT Font::getSystemFont() {
-		return systemFont;
+		return system_font;
 	}
 }

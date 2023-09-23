@@ -5,10 +5,9 @@
 
 namespace sw {
 	static int window_count = 0;	// Windows owned by SWL
-	Vector2u last_size;					// Window lastSize
 	const wchar_t* class_name = L"SWM_Window";
 
-	Window::Window(Vector2u position, Vector2u size, std::string title)
+	Window::Window(Vector2i position, Vector2u size, std::string title)
 	{
 		Window::position = position;
 		Window::size = size;
@@ -33,17 +32,17 @@ namespace sw {
 	WNDCLASS Window::createWindowClass()
 	{
 		WNDCLASS winClass = { };
-		winClass.hIcon			= LoadIcon(NULL, IDI_APPLICATION);
-		winClass.hCursor		= LoadCursor(NULL, IDC_ARROW);
-		winClass.hInstance		= GetModuleHandle(nullptr);
-		winClass.hbrBackground	= (HBRUSH)COLOR_WINDOW;
-		winClass.lpszClassName	= class_name;
-		winClass.lpfnWndProc	= winProcedure;
+		winClass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+		winClass.hCursor = LoadCursor(NULL, IDC_ARROW);
+		winClass.hInstance = GetModuleHandle(nullptr);
+		winClass.hbrBackground = (HBRUSH)COLOR_WINDOW;
+		winClass.lpszClassName = class_name;
+		winClass.lpfnWndProc = winProcedure;
 
 		return winClass;
 	}
 
-	HWND Window::createWin(Vector2u position, Vector2u size, std::string title)
+	HWND Window::createWin(Vector2i position, Vector2u size, std::string title)
 	{
 		// convert string to wstring and use as wchar_t *
 		std::wstring wTitle(std::begin(title), std::end(title));
@@ -117,10 +116,14 @@ namespace sw {
 		// Window Resize
 		case WM_SIZE:
 			event.type = Event::Resized;
-			last_size = getSize();
-			event.size.width = last_size.x;
-			event.size.height = last_size.y;
+			event.size.width = (unsigned int)(short)LOWORD(lparam);
+			event.size.height = (unsigned int)(short)HIWORD(lparam);
+			size = Vector2u(event.size.width, event.size.height);
 			pushEvent(event);
+			break;
+
+		case WM_MOVE:
+			position = Vector2i((int)(short)LOWORD(lparam), (int)(short)HIWORD(lparam));
 			break;
 
 		case WM_PAINT:
@@ -180,29 +183,31 @@ namespace sw {
 		case WM_LBUTTONDOWN:
 		case WM_RBUTTONDOWN:
 			event.type = Event::MouseButtonPressed;
-			event.mouseClick.code = wparam;
-			event.mouseClick.x = GET_X_LPARAM(lparam);
-			event.mouseClick.y = GET_Y_LPARAM(lparam);
+			event.mouse_click.code = wparam;
+			event.mouse_click.x = GET_X_LPARAM(lparam);
+			event.mouse_click.y = GET_Y_LPARAM(lparam);
 			pushEvent(event);
 			break;
 
 		case WM_LBUTTONUP:
 		case WM_RBUTTONUP:
 			event.type = Event::MouseButtonReleased;
-			event.mouseClick.code = wparam;
-			event.mouseClick.x = GET_X_LPARAM(lparam);
-			event.mouseClick.y = GET_Y_LPARAM(lparam);
+			event.mouse_click.code = wparam;
+			event.mouse_click.x = GET_X_LPARAM(lparam);
+			event.mouse_click.y = GET_Y_LPARAM(lparam);
 			pushEvent(event);
 			break;
 
+		case WM_MOUSEWHEEL:
 		case WM_MOUSEHWHEEL:
 			event.type = Event::MouseWheelScrolled;
-			event.mouseScroll.z = GET_WHEEL_DELTA_WPARAM(wparam);
+			event.mouse_scroll.z = GET_WHEEL_DELTA_WPARAM(wparam);
 			pushEvent(event);
 			break;
 
+		case WM_NCMOUSELEAVE:
 		case WM_MOUSELEAVE:
-			event.type = Event::MouseLeft;
+			event.type = Event::MouseEntereOrLeft;
 			pushEvent(event);
 			break;
 
@@ -322,13 +327,13 @@ namespace sw {
 		handle = nullptr;
 	}
 
-	void Window::setParams(Vector2u& position, Vector2u& size) {
+	void Window::setParams(Vector2i& position, Vector2u& size) {
 		if (!handle) return;
 		setPosition(position);
 		setSize(size);
 	}
 
-	void Window::setPosition(Vector2u& position)
+	void Window::setPosition(Vector2i& position)
 	{
 		if (!handle) return;
 		Window::position = position;
