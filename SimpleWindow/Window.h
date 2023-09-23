@@ -5,9 +5,11 @@
 
 namespace sw {
 
+
 	struct simple_window_api Window {
+		int events_count = 0;
 		HWND handle = nullptr;
-		std::queue<Event> events;
+		Event events[50] = { };
 		
 		Vector2i position;
 		Vector2u size;

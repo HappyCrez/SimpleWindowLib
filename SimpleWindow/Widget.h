@@ -5,10 +5,6 @@
 
 #define WidgetButtonClickEvent 1
 
-#define ButtonClassName "button"
-#define LabelClassName "label"
-#define TextFieldClassName "textField"
-
 namespace sw {
 
 	enum WidgetType

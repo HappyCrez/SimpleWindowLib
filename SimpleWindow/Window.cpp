@@ -250,15 +250,18 @@ namespace sw {
 
 	bool windowPollEvent(Window& window, Event& event)
 	{
-		if (window.events.empty())
+		if (window.events_count == 0)
 		{
 			windowProcessEvents(window);
-
 			return false;
 		}
 		else {
-			event = window.events.front();
-			window.events.pop();
+			event = window.events[0];
+			for (int i = 0; i < 50; i++)
+			{
+				window.events[i + 1] = window.events[i];
+			}
+			window.events_count--;
 
 			return true;
 		}
@@ -266,7 +269,7 @@ namespace sw {
 
 	void windowPushEvent(Window* window, Event& event)
 	{
-		window->events.push(event);
+		window->events[window->events_count++] = event;
 	}
 
 	void windowAddWidget(Window& window, Widget& widget)
