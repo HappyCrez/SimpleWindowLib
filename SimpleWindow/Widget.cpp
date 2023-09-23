@@ -12,7 +12,7 @@ namespace sw {
 
 	void initWidgetTwoParams(Widget& widget, WidgetType type, std::string title)
 	{
-		initWidget(widget, Font(), type, Vector2u(200, 50), Vector2u(0, 0), title);
+		initWidget(widget, Font(), type, Vector2u{ 200, 50 }, Vector2u{ 0, 0 }, title);
 	}
 
 	void initWidget(Widget& widget, Font text_style, WidgetType type, Vector2u size, Vector2u position, std::string title)

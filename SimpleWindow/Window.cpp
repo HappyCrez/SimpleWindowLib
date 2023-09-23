@@ -10,12 +10,12 @@ namespace sw {
 
 	void initWindowZeroParams(Window& window)
 	{
-		initWindowTwoParams(window, Vector2u(1200, 800), "Hello world");
+		initWindowTwoParams(window, Vector2u{ 1200, 800 }, "Hello world");
 	}
 
 	void initWindowTwoParams(Window& window, Vector2u size, std::string title)
 	{
-		initWindowThreeParams(window, Vector2u(0, 0), size, title);
+		initWindowThreeParams(window, Vector2u{ 0, 0 }, size, title);
 	}
 
 	void initWindowThreeParams(Window& window, Vector2u position, Vector2u size, std::string title)
@@ -356,7 +356,7 @@ namespace sw {
 		if (!window.handle) return Vector2u();
 		RECT rect;
 		GetClientRect(window.handle, &rect);
-		return Vector2u(static_cast<unsigned int>(rect.right - rect.left), static_cast<unsigned int>(rect.bottom - rect.top));;
+		return Vector2u{ static_cast<unsigned int>(rect.right - rect.left), static_cast<unsigned int>(rect.bottom - rect.top) };
 	}
 
 	HWND getHandle(Window& window)
