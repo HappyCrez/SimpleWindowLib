@@ -20,6 +20,10 @@ namespace sw {
 
 	void initWindowThreeParams(Window& window, Vector2u position, Vector2u size, std::string title)
 	{
+		window.position = position;
+		window.size = size;
+		window.title = title;
+
 		if (window_count == 0)
 			createAndRegisterWindowClass(window);
 		++window_count;
@@ -342,12 +346,14 @@ namespace sw {
 	void setPosition(Window& window, Vector2u& position)
 	{
 		if (!window.handle) return;
+		window.position = position;
 		SetWindowPos(window.handle, NULL, position.x, position.y, window.size.x, window.size.y, 0);
 	}
 		
 	void setSize(Window& window, Vector2u& size)
 	{
 		if (!window.handle) return;
+		window.size = size;
 		SetWindowPos(window.handle, NULL, window.position.x, window.position.y, size.x, size.y, 0);
 	}
 
