@@ -5,6 +5,10 @@
 
 #define WidgetButtonClickEvent 1
 
+#define ButtonClassName "button"
+#define LabelClassName "label"
+#define TextFieldClassName "textField"
+
 namespace sw {
 
 	enum WidgetType
@@ -18,10 +22,10 @@ namespace sw {
 	{
 		HWND handle;
 
-		std::string class_name;
+		char* class_name;
 		WidgetType type;
 		
-		std::string title;
+		char* title;
 		Font text_style;
 		Vector2u size;
 		Vector2u position;
@@ -30,9 +34,9 @@ namespace sw {
 	extern "C" simple_window_api
 	void initWidgetZeroParams(Widget& widget);
 	extern "C" simple_window_api
-	void initWidgetTwoParams(Widget& widget, WidgetType type, std::string title);
+	void initWidgetTwoParams(Widget& widget, WidgetType type, char* title);
 	extern "C" simple_window_api
-	void initWidget(Widget& widget, Font text_style, WidgetType type, Vector2u size, Vector2u position, std::string title);
+	void initWidget(Widget& widget, Font text_style, WidgetType type, Vector2u size, Vector2u position, char* title);
 	extern "C" simple_window_api
 	bool buttonIsClicked(Widget& button, Event& event);
 
@@ -42,10 +46,10 @@ namespace sw {
 	void widgetSetPosition(Widget& widget, Vector2u position);
 
 	extern "C" simple_window_api
-	void widgetSetText(Widget& widget, std::string title);
+	void widgetSetText(Widget& widget, char* title);
 	extern "C" simple_window_api
-	std::string widgetGetText(Widget& widget, int buffer_size);
+	char* widgetGetText(Widget& widget, int buffer_size);
 
 	extern "C" simple_window_api
-	std::string widgetGetClassNameByType(WidgetType type);
+	char* widgetGetClassNameByType(WidgetType type);
 }

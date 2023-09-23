@@ -6,15 +6,18 @@ namespace sw
 {
 	void initFontZeroParams(Font& font)
 	{
-		initFontThreeParams(font, 12, FW_LIGHT, "Times New Roman");
+
+		char* font_family = (char*)malloc(20 * sizeof(char));
+		strcpy(font_family, "Times New Roman\0");
+		initFontThreeParams(font, 12, FW_LIGHT, font_family);
 	}
 
-	void initFontThreeParams(Font& font, int size, int weight, std::string font_family)
+	void initFontThreeParams(Font& font, int size, int weight, char* font_family)
 	{
 		initFont(font, TextAlign::Left, size, weight, false, false, false, font_family);
 	}
 
-	void initFont(Font& font, TextAlign align, int size, int weight, bool is_cursive, bool is_underline, bool is_strikeOut, std::string font_family)
+	void initFont(Font& font, TextAlign align, int size, int weight, bool is_cursive, bool is_underline, bool is_strikeOut, char* font_family)
 	{
 		font.align = align;
 		font.size = size;

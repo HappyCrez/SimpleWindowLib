@@ -9,15 +9,17 @@ namespace sw {
 
 	void initWindowZeroParams(Window& window)
 	{
-		initWindowTwoParams(window, Vector2u{ 1200, 800 }, "Hello world");
+		char* title = (char*)malloc(2 * sizeof(char));
+		*title = '\0';
+		initWindowTwoParams(window, Vector2u{ 1200, 800 }, title);
 	}
 
-	void initWindowTwoParams(Window& window, Vector2u size, std::string title)
+	void initWindowTwoParams(Window& window, Vector2u size, char* title)
 	{
 		initWindow(window, Vector2u{ 0, 0 }, size, title);
 	}
 
-	void initWindow(Window& window, Vector2u position, Vector2u size, std::string title)
+	void initWindow(Window& window, Vector2u position, Vector2u size, char* title)
 	{
 		window.title = title;
 
@@ -50,15 +52,16 @@ namespace sw {
 		return window_class;
 	}
 
-	HWND windowCreate(Window* window, Vector2u position, Vector2u size, std::string title)
+	HWND windowCreate(Window* window, Vector2u position, Vector2u size, char* title)
 	{
-		// convert string to wstring and use as wchar_t *
-		std::wstring wchar_title(std::begin(title), std::end(title));
+		// convert char* to wchar_t *
+		wchar_t* wtitle = (wchar_t*)calloc(strlen(title) + 1, sizeof(wchar_t));
+		mbstowcs(wtitle, title, strlen(title));
 
 		return CreateWindowEx(
 			0,
 			class_name,
-			&wchar_title[0],	
+			wtitle,
 			WS_OVERLAPPEDWINDOW,
 			position.x,
 			position.y,
@@ -269,8 +272,8 @@ namespace sw {
 		Vector2u widget_position = widget.position;
 		Vector2u widget_size = widget.size;
 
-		std::string widget_class_name = widgetGetClassNameByType(widget.type);
-		std::string widget_title = widget.title;
+		char* widget_class_name = widgetGetClassNameByType(widget.type);
+		char* widget_title = widget.title;
 		Font widget_font = widget.text_style;
 		WidgetType widget_type = widget.type;
 
