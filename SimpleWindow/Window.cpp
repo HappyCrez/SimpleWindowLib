@@ -10,6 +10,10 @@ namespace sw {
 
 	Window::Window(Vector2u position, Vector2u size, std::string title)
 	{
+		Window::position = position;
+		Window::size = size;
+		Window::title = title;
+
 		if (window_count == 0)
 			createAndRegisterWindowClass();
 		++window_count;
@@ -327,12 +331,14 @@ namespace sw {
 	void Window::setPosition(Vector2u& position)
 	{
 		if (!handle) return;
+		Window::position = position;
 		SetWindowPos(handle, NULL, position.x, position.y, size.x, size.y, 0);
 	}
 		
 	void Window::setSize(Vector2u& size)
 	{
 		if (!handle) return;
+		Window::size = size;
 		SetWindowPos(handle, NULL, position.x, position.y, size.x, size.y, 0);
 	}
 
