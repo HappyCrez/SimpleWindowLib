@@ -16,18 +16,17 @@ namespace sw {
 		TextAlign align;
 		int size;
 		int weight;
-		bool isCursive;
-		bool isUnderline;
-		bool isStrikeOut;
-		std::string fontFamily;
-		HFONT systemFont;
+		bool is_cursive;
+		bool is_underline;
+		bool is_strikeOut;
+		std::string font_family;
+		HFONT system_font;
 	};
-
 
 	extern "C" simple_window_api
 	void initFontZeroParams(Font& font);
 	extern "C" simple_window_api
-	void initFontThreeParams(Font& font, int size, int weight, std::string fontFamily);
+	void initFontThreeParams(Font& font, int size, int weight, std::string font_family);
 	extern "C" simple_window_api
-	void initFont(Font& font, TextAlign align, int size, int weight, bool isCursive, bool isUnderline, bool isStrikeOut, std::string fontFamily);
+	void initFont(Font& font, TextAlign align, int size, int weight, bool is_cursive, bool is_underline, bool is_strikeOut, std::string font_family);
 }

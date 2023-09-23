@@ -32,32 +32,32 @@ namespace sw {
 
 	void createAndRegisterWindowClass(Window& window)
 	{
-		WNDCLASS winClass = createWindowClass(window);
-		RegisterClassW(&winClass);
+		WNDCLASS window_class = createWindowClass(window);
+		RegisterClassW(&window_class);
 	}
 
 	WNDCLASS createWindowClass(Window& window)
 	{
-		WNDCLASS winClass = { };
-		winClass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
-		winClass.hCursor = LoadCursor(NULL, IDC_ARROW);
-		winClass.hInstance = GetModuleHandle(nullptr);
-		winClass.hbrBackground = (HBRUSH)COLOR_WINDOW;
-		winClass.lpszClassName = class_name;
-		winClass.lpfnWndProc = winProcedure;
+		WNDCLASS window_class = { };
+		window_class.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+		window_class.hCursor = LoadCursor(NULL, IDC_ARROW);
+		window_class.hInstance = GetModuleHandle(nullptr);
+		window_class.hbrBackground = (HBRUSH)COLOR_WINDOW;
+		window_class.lpszClassName = class_name;
+		window_class.lpfnWndProc = winProcedure;
 
-		return winClass;
+		return window_class;
 	}
 
 	HWND createWin(Window* window, Vector2u position, Vector2u size, std::string title)
 	{
 		// convert string to wstring and use as wchar_t *
-		std::wstring wTitle(std::begin(title), std::end(title));
+		std::wstring wchar_title(std::begin(title), std::end(title));
 
 		return CreateWindowEx(
 			0,
 			class_name,
-			&wTitle[0],	
+			&wchar_title[0],	
 			WS_OVERLAPPEDWINDOW,
 			position.x,
 			position.y,
@@ -266,7 +266,7 @@ namespace sw {
 
 		std::string widget_class_name = widgetGetClassNameByType(widget.type);
 		std::string widget_title = widget.title;
-		Font widget_font = widget.textStyle;
+		Font widget_font = widget.text_style;
 		WidgetType widget_type = widget.type;
 
 		long int flags = getWidgetFlagsByType(widget_type, widget_font);
@@ -287,15 +287,15 @@ namespace sw {
 		SendMessageA(widget_handle, WM_CHANGEUISTATE, MAKEWPARAM(UIS_SET, UISF_HIDEFOCUS), 0);
 		
 		// Set Font
-		SendMessageA(widget_handle, WM_SETFONT, WPARAM(widget_font.systemFont), TRUE);
+		SendMessageA(widget_handle, WM_SETFONT, WPARAM(widget_font.system_font), TRUE);
 
 		widget.handle = widget_handle;
 	}
 
-	long int getWidgetFlagsByType(WidgetType widgetType, Font widgetFont)
+	long int getWidgetFlagsByType(WidgetType widget_type, Font widget_font)
 	{
 		long int flags = WS_VISIBLE | WS_CHILD;
-		switch (widgetFont.align)
+		switch (widget_font.align)
 		{
 		case TextAlign::Center:
 			flags |= ES_CENTER;
@@ -308,7 +308,7 @@ namespace sw {
 			break;
 		}
 
-		switch (widgetType)
+		switch (widget_type)
 		{
 			case WidgetType::TextField:
 				flags |= ES_MULTILINE;

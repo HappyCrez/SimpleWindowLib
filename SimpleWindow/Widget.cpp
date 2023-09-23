@@ -15,13 +15,13 @@ namespace sw {
 		initWidget(widget, Font(), type, Vector2u(200, 50), Vector2u(0, 0), title);
 	}
 
-	void initWidget(Widget& widget, Font textStyle, WidgetType type, Vector2u size, Vector2u position, std::string title)
+	void initWidget(Widget& widget, Font text_style, WidgetType type, Vector2u size, Vector2u position, std::string title)
 	{
 		widget.handle = nullptr;
 		widget.size = size;
 		widget.position = position;
 		widget.title = title;
-		widget.textStyle = textStyle;
+		widget.text_style = text_style;
 		widget.type = type;
 		widget.class_name = widgetGetClassNameByType(type);
 	}
@@ -63,17 +63,17 @@ namespace sw {
 		SetWindowTextA(widget.handle, &title[0]);
 	}
 
-	std::string widgetGetText(Widget& widget, int symbolsCount)
+	std::string widgetGetText(Widget& widget, int buffer_size)
 	{
 		if (!widget.handle) return widget.title; // When window doesn't create, return title from constructor
-		char* buffer = (char*)std::calloc(symbolsCount, sizeof(char));
-		GetWindowTextA(widget.handle, buffer, symbolsCount);
+		char* buffer = (char*)std::calloc(buffer_size, sizeof(char));
+		GetWindowTextA(widget.handle, buffer, buffer_size);
 		return buffer;
 	}
 
-	bool widgetIsClicked(Widget& widget, Event& event)
+	bool buttonIsClicked(Widget& button, Event& event)
 	{
-		if (event.button.ID == widget.handle)
+		if (event.button.ID == button.handle)
 				return true;
 		return false;
 	}

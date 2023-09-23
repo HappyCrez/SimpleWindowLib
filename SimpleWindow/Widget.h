@@ -22,7 +22,7 @@ namespace sw {
 		WidgetType type;
 		
 		std::string title;
-		Font textStyle;
+		Font text_style;
 		Vector2u size;
 		Vector2u position;
 	};
@@ -32,9 +32,9 @@ namespace sw {
 	extern "C" simple_window_api
 	void initWidgetTwoParams(Widget& widget, WidgetType type, std::string title);
 	extern "C" simple_window_api
-	void initWidget(Widget& widget, Font textStyle, WidgetType type, Vector2u size, Vector2u position, std::string title);
+	void initWidget(Widget& widget, Font text_style, WidgetType type, Vector2u size, Vector2u position, std::string title);
 	extern "C" simple_window_api
-	bool widgetIsClicked(Widget& widget, Event& event);
+	bool buttonIsClicked(Widget& button, Event& event);
 
 	extern "C" simple_window_api
 	void widgetSetSize(Widget& widget, Vector2u size);
@@ -44,7 +44,7 @@ namespace sw {
 	extern "C" simple_window_api
 	void widgetSetText(Widget& widget, std::string title);
 	extern "C" simple_window_api
-	std::string widgetGetText(Widget& widget, int symbolsCount);
+	std::string widgetGetText(Widget& widget, int buffer_size);
 
 	extern "C" simple_window_api
 	std::string widgetGetClassNameByType(WidgetType type);

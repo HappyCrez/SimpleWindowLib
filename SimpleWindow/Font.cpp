@@ -9,23 +9,23 @@ namespace sw
 		initFontThreeParams(font, 12, FW_LIGHT, "Times New Roman");
 	}
 
-	void initFontThreeParams(Font& font, int size, int weight, std::string fontFamily)
+	void initFontThreeParams(Font& font, int size, int weight, std::string font_family)
 	{
-		initFont(font, TextAlign::Left, size, weight, false, false, false, fontFamily);
+		initFont(font, TextAlign::Left, size, weight, false, false, false, font_family);
 	}
 
-	void initFont(Font& font, TextAlign align, int size, int weight, bool isCursive, bool isUnderline, bool isStrikeOut, std::string fontFamily)
+	void initFont(Font& font, TextAlign align, int size, int weight, bool is_cursive, bool is_underline, bool is_strikeOut, std::string font_family)
 	{
 		font.align = align;
 		font.size = size;
-		font.fontFamily = fontFamily;
+		font.font_family = font_family;
 		font.weight = weight;
-		font.isCursive = isCursive;
-		font.isUnderline = isUnderline;
-		font.isStrikeOut = isStrikeOut;
+		font.is_cursive = is_cursive;
+		font.is_underline = is_underline;
+		font.is_strikeOut = is_strikeOut;
 
-		font.systemFont = CreateFontA(size, 0, 0, 0,
-			weight, isCursive, isUnderline, isStrikeOut, OEM_CHARSET, OUT_DEFAULT_PRECIS,
-			CLIP_DEFAULT_PRECIS, PROOF_QUALITY, VARIABLE_PITCH, &fontFamily[0]);
+		font.system_font = CreateFontA(size, 0, 0, 0,
+			weight, is_cursive, is_underline, is_strikeOut, OEM_CHARSET, OUT_DEFAULT_PRECIS,
+			CLIP_DEFAULT_PRECIS, PROOF_QUALITY, VARIABLE_PITCH, &font_family[0]);
 	}
 }
