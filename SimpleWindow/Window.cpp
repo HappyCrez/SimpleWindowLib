@@ -287,7 +287,7 @@ namespace sw {
 		SendMessageA(widget_handle, WM_CHANGEUISTATE, MAKEWPARAM(UIS_SET, UISF_HIDEFOCUS), 0);
 		
 		// Set Font
-		SendMessageA(widget_handle, WM_SETFONT, WPARAM(widget_font.getSystemFont()), TRUE);
+		SendMessageA(widget_handle, WM_SETFONT, WPARAM(widget_font.systemFont), TRUE);
 
 		widget.handle = widget_handle;
 	}
@@ -295,7 +295,7 @@ namespace sw {
 	long int getWidgetFlagsByType(WidgetType widgetType, Font widgetFont)
 	{
 		long int flags = WS_VISIBLE | WS_CHILD;
-		switch (widgetFont.getAlign())
+		switch (widgetFont.align)
 		{
 		case TextAlign::Center:
 			flags |= ES_CENTER;
